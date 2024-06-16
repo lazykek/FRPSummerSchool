@@ -52,6 +52,12 @@ class ViewController: UIViewController {
     // MARK: - Private methods
 
     func setupUI() {
+        title = "Телевизоры"
+        navigationItem.rightBarButtonItem = .init(
+            systemItem: .edit,
+            primaryAction: .init(handler: { _ in })
+        )
+
         view.backgroundColor = .systemBackground
         view.addSubview(stackView)
         stackView.addArrangedSubview(collectionView)
