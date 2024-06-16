@@ -9,6 +9,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    let storage = Storage.shared
+
     // MARK: - UI
 
     override func viewDidLoad() {

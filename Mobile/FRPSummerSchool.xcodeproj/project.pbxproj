@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D6F8C382C1F09A8005EAA8A /* Television.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6F8C372C1F09A8005EAA8A /* Television.swift */; };
+		7D6F8C3A2C1F0A64005EAA8A /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6F8C392C1F0A64005EAA8A /* Storage.swift */; };
+		7D6F8C3C2C1F0A95005EAA8A /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D6F8C3B2C1F0A95005EAA8A /* Network.swift */; };
 		7D72DAC82C1ED15A0066D073 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72DAC72C1ED15A0066D073 /* AppDelegate.swift */; };
 		7D72DACA2C1ED15A0066D073 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72DAC92C1ED15A0066D073 /* SceneDelegate.swift */; };
 		7D72DACC2C1ED15A0066D073 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72DACB2C1ED15A0066D073 /* ViewController.swift */; };
@@ -15,6 +18,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7D6F8C372C1F09A8005EAA8A /* Television.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = Television.swift; sourceTree = "<group>"; tabWidth = 4; };
+		7D6F8C392C1F0A64005EAA8A /* Storage.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; tabWidth = 4; };
+		7D6F8C3B2C1F0A95005EAA8A /* Network.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; tabWidth = 4; };
 		7D72DAC42C1ED15A0066D073 /* FRPSummerSchool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FRPSummerSchool.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D72DAC72C1ED15A0066D073 /* AppDelegate.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; tabWidth = 4; };
 		7D72DAC92C1ED15A0066D073 /* SceneDelegate.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; tabWidth = 4; };
@@ -57,6 +63,9 @@
 				7D72DAC72C1ED15A0066D073 /* AppDelegate.swift */,
 				7D72DAC92C1ED15A0066D073 /* SceneDelegate.swift */,
 				7D72DACB2C1ED15A0066D073 /* ViewController.swift */,
+				7D6F8C372C1F09A8005EAA8A /* Television.swift */,
+				7D6F8C392C1F0A64005EAA8A /* Storage.swift */,
+				7D6F8C3B2C1F0A95005EAA8A /* Network.swift */,
 				7D72DAD02C1ED15B0066D073 /* Assets.xcassets */,
 				7D72DAD22C1ED15B0066D073 /* LaunchScreen.storyboard */,
 				7D72DAD52C1ED15B0066D073 /* Info.plist */,
@@ -134,9 +143,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D6F8C382C1F09A8005EAA8A /* Television.swift in Sources */,
 				7D72DACC2C1ED15A0066D073 /* ViewController.swift in Sources */,
+				7D6F8C3C2C1F0A95005EAA8A /* Network.swift in Sources */,
 				7D72DAC82C1ED15A0066D073 /* AppDelegate.swift in Sources */,
 				7D72DACA2C1ED15A0066D073 /* SceneDelegate.swift in Sources */,
+				7D6F8C3A2C1F0A64005EAA8A /* Storage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,7 +218,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -263,7 +275,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

@@ -10,4 +10,5 @@ import Vapor
 struct Item: Encodable {
   let name: String
   let price: Int
+  let url: String
 }
