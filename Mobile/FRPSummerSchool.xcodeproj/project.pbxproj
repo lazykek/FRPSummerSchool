@@ -15,6 +15,7 @@
 		7D72DACC2C1ED15A0066D073 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72DACB2C1ED15A0066D073 /* ViewController.swift */; };
 		7D72DAD12C1ED15B0066D073 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D72DAD02C1ED15B0066D073 /* Assets.xcassets */; };
 		7D72DAD42C1ED15B0066D073 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D72DAD22C1ED15B0066D073 /* LaunchScreen.storyboard */; };
+		7DAF5EE52C1F19F900B56F88 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAF5EE42C1F19F900B56F88 /* ItemCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		7D72DAD02C1ED15B0066D073 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D72DAD32C1ED15B0066D073 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D72DAD52C1ED15B0066D073 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7DAF5EE42C1F19F900B56F88 /* ItemCell.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; tabWidth = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				7D6F8C372C1F09A8005EAA8A /* Television.swift */,
 				7D6F8C392C1F0A64005EAA8A /* Storage.swift */,
 				7D6F8C3B2C1F0A95005EAA8A /* Network.swift */,
+				7DAF5EE42C1F19F900B56F88 /* ItemCell.swift */,
 				7D72DAD02C1ED15B0066D073 /* Assets.xcassets */,
 				7D72DAD22C1ED15B0066D073 /* LaunchScreen.storyboard */,
 				7D72DAD52C1ED15B0066D073 /* Info.plist */,
@@ -147,6 +150,7 @@
 				7D72DACC2C1ED15A0066D073 /* ViewController.swift in Sources */,
 				7D6F8C3C2C1F0A95005EAA8A /* Network.swift in Sources */,
 				7D72DAC82C1ED15A0066D073 /* AppDelegate.swift in Sources */,
+				7DAF5EE52C1F19F900B56F88 /* ItemCell.swift in Sources */,
 				7D72DACA2C1ED15A0066D073 /* SceneDelegate.swift in Sources */,
 				7D6F8C3A2C1F0A64005EAA8A /* Storage.swift in Sources */,
 			);

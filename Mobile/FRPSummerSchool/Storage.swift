@@ -18,13 +18,17 @@ final class Storage {
 
     static let shared: Storage = .init()
 
+    // MARK: - Properties
+
+    var onItems: (([Item]) -> Void)?
+
     // MARK: - Init
 
     private init() {
-        Network.shared.loadTelevision { result in
+        Network.shared.loadTelevisions { [weak self] result in
             switch result {
-            case .success(let items):
-                print(items)
+            case .success(let televisions):
+                self?.onItems?(televisions.map { .init(television: $0, count: 0) })
             case .failure(let error):
                 break
             }

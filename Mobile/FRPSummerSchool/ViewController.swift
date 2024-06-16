@@ -13,6 +13,7 @@ class ViewController: UIViewController {
 
     private let stackView: UIStackView = {
         let stackView = UIStackView()
+        stackView.distribution = .equalSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -20,6 +21,7 @@ class ViewController: UIViewController {
     private let collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.itemSize = .init(width: 200, height: 200)
+        flowLayout.scrollDirection = .horizontal
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: flowLayout
@@ -38,6 +40,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        storage.onItems = { [weak self] items in
+            DispatchQueue.main.async {
+                self?.items = items
+                self?.collectionView.reloadData()
+            }
+        }
     }
 
     // MARK: - Private methods
@@ -45,18 +53,19 @@ class ViewController: UIViewController {
     func setupUI() {
         view.backgroundColor = .systemBackground
         view.addSubview(stackView)
+        stackView.addArrangedSubview(collectionView)
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
-        stackView.addArrangedSubview(collectionView)
+
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(
-            UICollectionViewCell.self,
-            forCellWithReuseIdentifier: "UICollectionViewCell"
+            ItemCell.self,
+            forCellWithReuseIdentifier: "ItemCell"
         )
         collectionView.reloadData()
     }
@@ -76,7 +85,10 @@ extension ViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        UICollectionViewCell()
+        collectionView.dequeueReusableCell(
+            withReuseIdentifier: "ItemCell",
+            for: indexPath
+        )
     }
 }
 

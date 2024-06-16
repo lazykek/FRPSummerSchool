@@ -22,7 +22,7 @@ final class Network {
     private init() {
     }
 
-    func loadTelevision(completion: @escaping (Result<[Television], Error>) -> ()) {
+    func loadTelevisions(completion: @escaping (Result<[Television], Error>) -> ()) {
         let request = URLRequest(url: URL(string: "http://127.0.0.1:8080/items")!)
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard error == nil else {
