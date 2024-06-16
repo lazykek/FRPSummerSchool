@@ -63,6 +63,8 @@ class ViewController: UIViewController {
 
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.contentInset = .init(top: 16, left: 16, bottom: 16, right: 16)
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(
             ItemCell.self,
             forCellWithReuseIdentifier: "ItemCell"
@@ -85,10 +87,12 @@ extension ViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        collectionView.dequeueReusableCell(
+        let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: "ItemCell",
             for: indexPath
-        )
+        ) as? ItemCell
+        cell?.item = items[indexPath.item]
+        return cell ?? UICollectionViewCell()
     }
 }
 

@@ -9,6 +9,14 @@ import UIKit
 
 final class ItemCell: UICollectionViewCell {
 
+    // MARK: - Properties
+
+    var item: Item? {
+        didSet {
+            updateUI()
+        }
+    }
+
     // MARK: - UI
 
     private let imageView: UIImageView = {
@@ -46,7 +54,6 @@ final class ItemCell: UICollectionViewCell {
     private let countLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "0"
         return label
     }()
 
@@ -81,5 +88,15 @@ final class ItemCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Private properties
+
+    private func updateUI() {
+        guard let item else {
+            return
+        }
+        imageView.load(url: URL(string: item.television.url)!)
+        countLabel.text = "\(item.count)"
     }
 }
