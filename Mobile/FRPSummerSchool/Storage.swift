@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct Item {
+    let television: Television
+    let count: Int
+}
+
 final class Storage {
 
     // MARK: - Singleton

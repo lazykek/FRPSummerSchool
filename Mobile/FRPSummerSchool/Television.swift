@@ -9,4 +9,5 @@ struct Television: Decodable {
     let name: String
     let price: Int
     let url: String
+    let id: String
 }
