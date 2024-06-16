@@ -13,7 +13,8 @@ class ViewController: UIViewController {
 
     private let stackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fillEqually
+        stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
