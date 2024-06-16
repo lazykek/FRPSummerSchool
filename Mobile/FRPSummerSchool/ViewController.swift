@@ -99,4 +99,15 @@ extension ViewController: UICollectionViewDataSource {
 // MARK: - UICollectionViewDelegate
 
 extension ViewController: UICollectionViewDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let vc = DetailsViewController()
+        vc.item = items[indexPath.item]
+        navigationController?.pushViewController(
+            vc,
+            animated: true
+        )
+    }
 }
