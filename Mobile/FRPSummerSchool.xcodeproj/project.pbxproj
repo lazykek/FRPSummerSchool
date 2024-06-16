@@ -10,7 +10,6 @@
 		7D72DAC82C1ED15A0066D073 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72DAC72C1ED15A0066D073 /* AppDelegate.swift */; };
 		7D72DACA2C1ED15A0066D073 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72DAC92C1ED15A0066D073 /* SceneDelegate.swift */; };
 		7D72DACC2C1ED15A0066D073 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D72DACB2C1ED15A0066D073 /* ViewController.swift */; };
-		7D72DACF2C1ED15A0066D073 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D72DACD2C1ED15A0066D073 /* Main.storyboard */; };
 		7D72DAD12C1ED15B0066D073 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D72DAD02C1ED15B0066D073 /* Assets.xcassets */; };
 		7D72DAD42C1ED15B0066D073 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D72DAD22C1ED15B0066D073 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -19,8 +18,7 @@
 		7D72DAC42C1ED15A0066D073 /* FRPSummerSchool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FRPSummerSchool.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D72DAC72C1ED15A0066D073 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D72DAC92C1ED15A0066D073 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		7D72DACB2C1ED15A0066D073 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		7D72DACE2C1ED15A0066D073 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		7D72DACB2C1ED15A0066D073 /* ViewController.swift */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; tabWidth = 4; };
 		7D72DAD02C1ED15B0066D073 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D72DAD32C1ED15B0066D073 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D72DAD52C1ED15B0066D073 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -59,7 +57,6 @@
 				7D72DAC72C1ED15A0066D073 /* AppDelegate.swift */,
 				7D72DAC92C1ED15A0066D073 /* SceneDelegate.swift */,
 				7D72DACB2C1ED15A0066D073 /* ViewController.swift */,
-				7D72DACD2C1ED15A0066D073 /* Main.storyboard */,
 				7D72DAD02C1ED15B0066D073 /* Assets.xcassets */,
 				7D72DAD22C1ED15B0066D073 /* LaunchScreen.storyboard */,
 				7D72DAD52C1ED15B0066D073 /* Info.plist */,
@@ -127,7 +124,6 @@
 			files = (
 				7D72DAD42C1ED15B0066D073 /* LaunchScreen.storyboard in Resources */,
 				7D72DAD12C1ED15B0066D073 /* Assets.xcassets in Resources */,
-				7D72DACF2C1ED15A0066D073 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,14 +143,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		7D72DACD2C1ED15A0066D073 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7D72DACE2C1ED15A0066D073 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		7D72DAD22C1ED15B0066D073 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -297,7 +285,6 @@
 				INFOPLIST_FILE = FRPSummerSchool/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -329,7 +316,6 @@
 				INFOPLIST_FILE = FRPSummerSchool/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
