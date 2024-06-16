@@ -18,6 +18,7 @@
 		7DAF5EE52C1F19F900B56F88 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAF5EE42C1F19F900B56F88 /* ItemCell.swift */; };
 		7DAF5EE82C1F27D800B56F88 /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAF5EE72C1F27D800B56F88 /* UIImageView.swift */; };
 		7DAF5EEA2C1F2CBC00B56F88 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAF5EE92C1F2CBC00B56F88 /* DetailsViewController.swift */; };
+		7DAF5EED2C1F3F7400B56F88 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 7DAF5EEC2C1F3F7400B56F88 /* RxCocoa */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DAF5EED2C1F3F7400B56F88 /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,6 +108,9 @@
 			dependencies = (
 			);
 			name = FRPSummerSchool;
+			packageProductDependencies = (
+				7DAF5EEC2C1F3F7400B56F88 /* RxCocoa */,
+			);
 			productName = FRPSummerSchool;
 			productReference = 7D72DAC42C1ED15A0066D073 /* FRPSummerSchool.app */;
 			productType = "com.apple.product-type.application";
@@ -134,6 +139,9 @@
 				Base,
 			);
 			mainGroup = 7D72DABB2C1ED15A0066D073;
+			packageReferences = (
+				7DAF5EEB2C1F3F7400B56F88 /* XCRemoteSwiftPackageReference "RxSwift" */,
+			);
 			productRefGroup = 7D72DAC52C1ED15A0066D073 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -389,6 +397,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7DAF5EEB2C1F3F7400B56F88 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7DAF5EEC2C1F3F7400B56F88 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7DAF5EEB2C1F3F7400B56F88 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7D72DABC2C1ED15A0066D073 /* Project object */;
 }
