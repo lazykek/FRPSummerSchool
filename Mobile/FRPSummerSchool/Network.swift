@@ -22,8 +22,21 @@ final class Network {
     private init() {
     }
 
+    // MARK: - Internal methods
+
     func loadTelevisions(completion: @escaping (Result<[Television], Error>) -> ()) {
-        let request = URLRequest(url: URL(string: "http://127.0.0.1:8080/items")!)
+        loadData(
+            request: URLRequest(url: URL(string: "http://127.0.0.1:8080/items")!),
+            completion: completion
+        )
+    }
+
+    // MARK: - Private methods
+
+    func loadData<T: Decodable>(
+        request: URLRequest,
+        completion: @escaping (Result<[T], Error>) -> ()
+    ) {
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard error == nil else {
                 completion(.failure(error!))
@@ -31,7 +44,7 @@ final class Network {
             }
             guard
                 let data,
-                let items = try? JSONDecoder().decode([Television].self, from: data)
+                let items = try? JSONDecoder().decode([T].self, from: data)
             else {
                 completion(.failure(NetworkError.dataCorrupted))
                 return
