@@ -48,7 +48,7 @@ final class FiltersViewController: UIViewController {
         setupUI()
     }
 
-    // MARK: - Init
+    // MARK: - Lifecycle
 
     init(price: Int) {
         super.init(nibName: nil, bundle: nil)

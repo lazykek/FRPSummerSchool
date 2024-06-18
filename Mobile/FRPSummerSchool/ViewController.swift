@@ -30,6 +30,7 @@ class ViewController: UIViewController {
     private let storage = Storage.shared
     private let minPriceSubject = BehaviorSubject<Int>(value: 0)
     private let disposeBag = DisposeBag()
+    private var filtersDisposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
@@ -51,11 +52,11 @@ class ViewController: UIViewController {
         ) { index, item, cell in
             let cell = cell as? ItemCell
             cell?.item = item
-            cell?.onAdding = { [weak self] id in
-                self?.storage.addItem(id: id)
+            cell?.onAdding = { [unowned self] id in
+                storage.addItem(id: id)
             }
-            cell?.onRemoving = { [weak self] id in
-                self?.storage.removeItem(id: id)
+            cell?.onRemoving = { [unowned self] id in
+                storage.removeItem(id: id)
             }
         }
         .disposed(by: disposeBag)
@@ -116,8 +117,14 @@ class ViewController: UIViewController {
 
     private func openFilters() {
         let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
-        vc.price.subscribe(minPriceSubject)
-            .disposed(by: disposeBag)
+//        luggy code
+//        vc.price.subscribe(minPriceSubject)
+//            .disposed(by: filtersDisposeBag)
+        vc.price.subscribe { [unowned self] value in
+            minPriceSubject.onNext(value)
+        }
+        .disposed(by: disposeBag)
+
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [
             .custom(
@@ -126,6 +133,6 @@ class ViewController: UIViewController {
                 }
             )
         ]
-        present(vc, animated: true, completion: nil)
+        self.navigationController?.present(vc, animated: true)
     }
 }
