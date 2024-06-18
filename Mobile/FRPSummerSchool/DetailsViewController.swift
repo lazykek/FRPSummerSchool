@@ -16,6 +16,7 @@ final class DetailsViewController: UIViewController {
             updateUI()
         }
     }
+    private let storage = Storage.shared
 
     // MARK: - UI
 
@@ -78,6 +79,24 @@ final class DetailsViewController: UIViewController {
         controls.addArrangedSubview(plusButton)
         controls.addArrangedSubview(countLabel)
         controls.addArrangedSubview(minusButton)
+
+        plusButton.addAction(
+            .init(handler: { [weak self] _ in
+                self?.storage.addItem(
+                    id: self?.item?.television.id ?? ""
+                )
+            }),
+            for: .touchUpInside
+        )
+
+        minusButton.addAction(
+            .init(handler: { [weak self] _ in
+                self?.storage.removeItem(
+                    id: self?.item?.television.id ?? ""
+                )
+            }),
+            for: .touchUpInside
+        )
 
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
