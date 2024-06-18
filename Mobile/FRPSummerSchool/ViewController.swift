@@ -120,6 +120,9 @@ class ViewController: UIViewController {
 //        luggy code
 //        vc.price.subscribe(minPriceSubject)
 //            .disposed(by: filtersDisposeBag)
+//        completed эммитится в общий флоу,
+//        и поэтому даже после пересоздания подписки
+//        таблица не обновляется
         vc.price.subscribe { [unowned self] value in
             minPriceSubject.onNext(value)
         }
