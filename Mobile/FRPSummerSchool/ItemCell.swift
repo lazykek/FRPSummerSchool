@@ -29,6 +29,18 @@ final class ItemCell: UICollectionViewCell {
         return imageView
     }()
 
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let priceLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private let controls: UIStackView = {
         let stackView = UIStackView()
         stackView.distribution = .fillProportionally
@@ -64,6 +76,7 @@ final class ItemCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupUI()
 
         plusButton.addAction(
             .init(handler: { [weak self] _ in
@@ -94,15 +107,21 @@ final class ItemCell: UICollectionViewCell {
     private func updateUI() {
         guard let item else {
             imageView.image = nil
+            nameLabel.text = nil
+            priceLabel.text = nil
             countLabel.text = nil
             return
         }
         imageView.load(url: URL(string: item.television.url)!)
+        nameLabel.text = item.television.name
+        priceLabel.text = "\(item.television.price) руб"
         countLabel.text = "\(item.count)"
     }
 
     private func setupUI() {
         contentView.addSubview(imageView)
+        contentView.addSubview(nameLabel)
+        contentView.addSubview(priceLabel)
         contentView.addSubview(controls)
 
         controls.addArrangedSubview(plusButton)
@@ -120,7 +139,15 @@ final class ItemCell: UICollectionViewCell {
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 150),
 
-            controls.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+            nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
+
+            priceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
+            priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
+
+            controls.topAnchor.constraint(equalTo: priceLabel.bottomAnchor),
             controls.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             controls.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             controls.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
