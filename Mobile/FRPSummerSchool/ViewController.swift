@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
 class ViewController: UIViewController {
 
@@ -35,18 +37,25 @@ class ViewController: UIViewController {
 
     private var items: [Item] = []
     private let storage = Storage.shared
+    private let disposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        storage.onItems = { [weak self] items in
-            DispatchQueue.main.async {
+        storage.items
+            .observe(on: MainScheduler.instance)
+            .subscribe(
+            onNext: { [weak self] items in
                 self?.items = items
                 self?.collectionView.reloadData()
+            },
+            onError: { error in
+                print(error)
             }
-        }
+        )
+        .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
@@ -68,7 +77,6 @@ class ViewController: UIViewController {
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
 
-        collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.contentInset = .init(top: 16, left: 16, bottom: 16, right: 16)
         collectionView.showsHorizontalScrollIndicator = false
@@ -77,6 +85,27 @@ class ViewController: UIViewController {
             forCellWithReuseIdentifier: "ItemCell"
         )
         collectionView.reloadData()
+
+        collectionView
+            .rx
+            .itemSelected
+            .flatMap { [unowned self] indexPath in
+                self.storage.items
+                    .take(1)
+                    .map { items in
+                        items[indexPath.row]
+                    }
+            }
+            .observe(on: MainScheduler.instance)
+            .bind { [unowned self] item in
+                let vc = DetailsViewController()
+                vc.item = item
+                self.navigationController?.pushViewController(
+                    vc,
+                    animated: true
+                )
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -100,21 +129,5 @@ extension ViewController: UICollectionViewDataSource {
         ) as? ItemCell
         cell?.item = items[indexPath.item]
         return cell ?? UICollectionViewCell()
-    }
-}
-
-// MARK: - UICollectionViewDelegate
-
-extension ViewController: UICollectionViewDelegate {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
-        let vc = DetailsViewController()
-        vc.item = items[indexPath.item]
-        navigationController?.pushViewController(
-            vc,
-            animated: true
-        )
     }
 }

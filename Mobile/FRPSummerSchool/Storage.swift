@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 struct Item {
     let television: Television
@@ -20,7 +21,7 @@ final class Storage {
 
     // MARK: - Properties
 
-    var onItems: (([Item]) -> Void)?
+    var items: BehaviorSubject<[Item]> = .init(value: [])
 
     // MARK: - Init
 
@@ -28,9 +29,9 @@ final class Storage {
         Network.shared.loadTelevisions { [weak self] result in
             switch result {
             case .success(let televisions):
-                self?.onItems?(televisions.map { .init(television: $0, count: 0) })
+                self?.items.onNext(televisions.map { .init(television: $0, count: 0) })
             case .failure(let error):
-                break
+                self?.items.onError(error)
             }
         }
     }
