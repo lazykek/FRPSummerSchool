@@ -13,17 +13,9 @@ class ViewController: UIViewController {
 
     // MARK: - UI
 
-    private let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.distribution = .fillEqually
-        stackView.axis = .vertical
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-
     private let collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.itemSize = .init(width: 200, height: 200)
+        flowLayout.itemSize = .init(width: 200, height: 250)
         flowLayout.scrollDirection = .horizontal
         let collectionView = UICollectionView(
             frame: .zero,
@@ -43,34 +35,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-    }
-
-    // MARK: - Private methods
-
-    private func setupUI() {
-        title = "Телевизоры"
-        navigationItem.rightBarButtonItem = .init(
-            systemItem: .edit,
-            primaryAction: .init(handler: { _ in })
-        )
-
-        view.backgroundColor = .systemBackground
-        view.addSubview(stackView)
-        stackView.addArrangedSubview(collectionView)
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-        ])
-
-        collectionView.contentInset = .init(top: 16, left: 16, bottom: 16, right: 16)
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.register(
-            ItemCell.self,
-            forCellWithReuseIdentifier: ItemCell.id
-        )
-
+    
         storage.items
             .bind(
                 to: collectionView.rx.items(cellIdentifier: ItemCell.id)
@@ -101,6 +66,32 @@ class ViewController: UIViewController {
                 openDetails(item: item)
             }
             .disposed(by: disposeBag)
+    }
+
+    // MARK: - Private methods
+
+    private func setupUI() {
+        title = "Телевизоры"
+        navigationItem.rightBarButtonItem = .init(
+            systemItem: .edit,
+            primaryAction: .init(handler: { _ in })
+        )
+
+        view.backgroundColor = .systemBackground
+        view.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.heightAnchor.constraint(equalToConstant: 550),
+        ])
+
+        collectionView.contentInset = .init(top: 16, left: 16, bottom: 16, right: 16)
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(
+            ItemCell.self,
+            forCellWithReuseIdentifier: ItemCell.id
+        )
     }
 
     private func openDetails(item: Item) {

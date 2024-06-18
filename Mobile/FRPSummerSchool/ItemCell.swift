@@ -64,17 +64,6 @@ final class ItemCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(imageView)
-        contentView.addSubview(controls)
-
-        controls.addArrangedSubview(plusButton)
-        controls.addArrangedSubview(countLabel)
-        controls.addArrangedSubview(minusButton)
-
-        layer.cornerRadius = 10
-        layer.masksToBounds = true
-        layer.borderWidth = 1
-        layer.borderColor = UIColor.black.cgColor
 
         plusButton.addAction(
             .init(handler: { [weak self] _ in
@@ -89,18 +78,6 @@ final class ItemCell: UICollectionViewCell {
             }),
             for: .touchUpInside
         )
-
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 150),
-        
-            controls.topAnchor.constraint(equalTo: imageView.bottomAnchor),
-            controls.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            controls.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            controls.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-        ])
     }
 
     override func prepareForReuse() {
@@ -122,5 +99,31 @@ final class ItemCell: UICollectionViewCell {
         }
         imageView.load(url: URL(string: item.television.url)!)
         countLabel.text = "\(item.count)"
+    }
+
+    private func setupUI() {
+        contentView.addSubview(imageView)
+        contentView.addSubview(controls)
+
+        controls.addArrangedSubview(plusButton)
+        controls.addArrangedSubview(countLabel)
+        controls.addArrangedSubview(minusButton)
+
+        layer.cornerRadius = 10
+        layer.masksToBounds = true
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.black.cgColor
+
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageView.heightAnchor.constraint(equalToConstant: 150),
+
+            controls.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+            controls.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            controls.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            controls.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ])
     }
 }
