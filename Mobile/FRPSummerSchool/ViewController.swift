@@ -66,16 +66,19 @@ class ViewController: UIViewController {
                 openDetails(item: item)
             }
             .disposed(by: disposeBag)
+
+        let barItem = UIBarButtonItem(systemItem: .edit)
+        barItem.rx.tap.bind { [unowned self] _ in
+            openFilters()
+        }
+        .disposed(by: disposeBag)
+        navigationItem.rightBarButtonItem = barItem
     }
 
     // MARK: - Private methods
 
     private func setupUI() {
         title = "Телевизоры"
-        navigationItem.rightBarButtonItem = .init(
-            systemItem: .edit,
-            primaryAction: .init(handler: { _ in })
-        )
 
         view.backgroundColor = .systemBackground
         view.addSubview(collectionView)
@@ -100,5 +103,22 @@ class ViewController: UIViewController {
             vc,
             animated: true
         )
+    }
+
+    private func openFilters() {
+        let vc = FiltersViewController(price: 100_000)
+        vc.price.subscribe(onNext: { value in
+
+        })
+        .disposed(by: disposeBag)
+        vc.modalPresentationStyle = .pageSheet
+        vc.sheetPresentationController?.detents = [
+            .custom(
+                resolver: { context in
+                    150
+                }
+            )
+        ]
+        present(vc, animated: true, completion: nil)
     }
 }
