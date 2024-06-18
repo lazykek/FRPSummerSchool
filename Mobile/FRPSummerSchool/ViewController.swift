@@ -60,7 +60,7 @@ class ViewController: UIViewController {
 
     // MARK: - Private methods
 
-    func setupUI() {
+    private func setupUI() {
         title = "Телевизоры"
         navigationItem.rightBarButtonItem = .init(
             systemItem: .edit,
@@ -77,14 +77,21 @@ class ViewController: UIViewController {
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
 
-        collectionView.dataSource = self
         collectionView.contentInset = .init(top: 16, left: 16, bottom: 16, right: 16)
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(
             ItemCell.self,
             forCellWithReuseIdentifier: "ItemCell"
         )
-        collectionView.reloadData()
+
+        Storage.shared.items
+            .bind(
+                to: collectionView.rx.items(cellIdentifier: "ItemCell")
+            ) { index, item, cell in
+                let cell = cell as? ItemCell
+                cell?.item = item
+            }
+            .disposed(by: disposeBag)
 
         collectionView
             .rx
@@ -98,36 +105,17 @@ class ViewController: UIViewController {
             }
             .observe(on: MainScheduler.instance)
             .bind { [unowned self] item in
-                let vc = DetailsViewController()
-                vc.item = item
-                self.navigationController?.pushViewController(
-                    vc,
-                    animated: true
-                )
+                openDetails(item: item)
             }
             .disposed(by: disposeBag)
     }
-}
 
-// MARK: - UICollectionViewDataSource
-
-extension ViewController: UICollectionViewDataSource {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        items.count
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "ItemCell",
-            for: indexPath
-        ) as? ItemCell
-        cell?.item = items[indexPath.item]
-        return cell ?? UICollectionViewCell()
+    private func openDetails(item: Item) {
+        let vc = DetailsViewController()
+        vc.item = item
+        self.navigationController?.pushViewController(
+            vc,
+            animated: true
+        )
     }
 }
