@@ -6,17 +6,15 @@
 //
 
 import UIKit
+import RxSwift
 
 final class DetailsViewController: UIViewController {
 
     // MARK: - Properties
 
-    var item: Item? {
-        didSet {
-            updateUI()
-        }
-    }
+    private let id: String
     private let storage = Storage.shared
+    private let disposeBag = DisposeBag()
 
     // MARK: - UI
 
@@ -67,9 +65,57 @@ final class DetailsViewController: UIViewController {
 
     // MARK: - Lifecycle
 
+    init(id: String) {
+        self.id = id
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
 
+        plusButton.addAction(
+            .init(handler: { [unowned self] _ in
+                storage.addItem(id: id)
+            }),
+            for: .touchUpInside
+        )
+
+        minusButton.addAction(
+            .init(handler: { [unowned self] _ in
+                storage.removeItem(id: id)
+            }),
+            for: .touchUpInside
+        )
+
+        storage.items
+            .compactMap { [unowned self] items in
+                items.first(where: { $0.television.id == id })
+            }
+            .observe(on: MainScheduler.instance)
+            .subscribe(
+                onNext: { [unowned self] item in
+                    updateUI(item: item)
+                }, onError: { error in
+                    print(error)
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+
+    // MARK: - Private methods
+
+    private func updateUI(item: Item) {
+        imageView.load(url: URL(string: item.television.url)!)
+        titleLabel.text = "\(item.television.name)"
+        countLabel.text = "\(item.count)"
+    }
+
+    private func setupUI() {
         view.backgroundColor = .systemBackground
 
         view.addSubview(imageView)
@@ -79,24 +125,6 @@ final class DetailsViewController: UIViewController {
         controls.addArrangedSubview(plusButton)
         controls.addArrangedSubview(countLabel)
         controls.addArrangedSubview(minusButton)
-
-        plusButton.addAction(
-            .init(handler: { [weak self] _ in
-                self?.storage.addItem(
-                    id: self?.item?.television.id ?? ""
-                )
-            }),
-            for: .touchUpInside
-        )
-
-        minusButton.addAction(
-            .init(handler: { [weak self] _ in
-                self?.storage.removeItem(
-                    id: self?.item?.television.id ?? ""
-                )
-            }),
-            for: .touchUpInside
-        )
 
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -112,17 +140,5 @@ final class DetailsViewController: UIViewController {
             controls.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             controls.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
         ])
-        updateUI()
-    }
-
-    // MARK: - Private properties
-
-    private func updateUI() {
-        guard let item else {
-            return
-        }
-        imageView.load(url: URL(string: item.television.url)!)
-        titleLabel.text = "\(item.television.name)"
-        countLabel.text = "\(item.count)"
     }
 }

@@ -22,6 +22,9 @@ final class Storage {
     // MARK: - Properties
 
     var items: BehaviorSubject<[Item]> = .init(value: [])
+    private let scheduler = SerialDispatchQueueScheduler(
+        internalSerialQueueName: "StorageSerialQueue"
+    )
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
@@ -31,6 +34,7 @@ final class Storage {
             items,
             Observable.just(id)
         )
+        .observe(on: scheduler)
         .take(1)
         .subscribe { [weak self] items, id in
             var items = items
@@ -44,6 +48,8 @@ final class Storage {
             items,
             Observable.just(id)
         )
+        // Reentrancy anomaly
+        // This is caused by the fact you are emitting elements into the subject while you’re reading from it, creating this instability
         .take(1)
         .subscribe { [weak self] items, id in
             var items = items

@@ -71,7 +71,7 @@ class ViewController: UIViewController {
             forCellWithReuseIdentifier: ItemCell.id
         )
 
-        Storage.shared.items
+        storage.items
             .bind(
                 to: collectionView.rx.items(cellIdentifier: ItemCell.id)
             ) { index, item, cell in
@@ -104,8 +104,7 @@ class ViewController: UIViewController {
     }
 
     private func openDetails(item: Item) {
-        let vc = DetailsViewController()
-        vc.item = item
+        let vc = DetailsViewController(id: item.television.id)
         self.navigationController?.pushViewController(
             vc,
             animated: true
