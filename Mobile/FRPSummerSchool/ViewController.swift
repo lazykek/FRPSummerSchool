@@ -28,6 +28,7 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
+    private let minPriceSubject = BehaviorSubject<Int>(value: 0)
     private let disposeBag = DisposeBag()
 
     // MARK: - Lifecycle
@@ -36,20 +37,28 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
     
-        storage.items
-            .bind(
-                to: collectionView.rx.items(cellIdentifier: ItemCell.id)
-            ) { index, item, cell in
-                let cell = cell as? ItemCell
-                cell?.item = item
-                cell?.onAdding = { [weak self] id in
-                    self?.storage.addItem(id: id)
-                }
-                cell?.onRemoving = { [weak self] id in
-                    self?.storage.removeItem(id: id)
-                }
+        Observable.combineLatest(
+            storage.items,
+            minPriceSubject
+        )
+        .compactMap { items, minPrice in
+            items
+                .filter { $0.television.price >= minPrice }
+        }
+        .distinctUntilChanged()
+        .bind(
+            to: collectionView.rx.items(cellIdentifier: ItemCell.id)
+        ) { index, item, cell in
+            let cell = cell as? ItemCell
+            cell?.item = item
+            cell?.onAdding = { [weak self] id in
+                self?.storage.addItem(id: id)
             }
-            .disposed(by: disposeBag)
+            cell?.onRemoving = { [weak self] id in
+                self?.storage.removeItem(id: id)
+            }
+        }
+        .disposed(by: disposeBag)
 
         collectionView
             .rx
@@ -106,11 +115,9 @@ class ViewController: UIViewController {
     }
 
     private func openFilters() {
-        let vc = FiltersViewController(price: 100_000)
-        vc.price.subscribe(onNext: { value in
-
-        })
-        .disposed(by: disposeBag)
+        let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
+        vc.price.subscribe(minPriceSubject)
+            .disposed(by: disposeBag)
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [
             .custom(

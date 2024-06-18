@@ -31,7 +31,7 @@ final class FiltersViewController: UIViewController {
     private let slider: UISlider = {
         let slider = UISlider()
         slider.minimumValue = 0
-        slider.maximumValue = 1_000_000
+        slider.maximumValue = 100_000
         slider.translatesAutoresizingMaskIntoConstraints = false
         return slider
     }()

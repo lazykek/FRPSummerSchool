@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-struct Item {
+struct Item: Equatable {
     let television: Television
     var count: Int
 }
