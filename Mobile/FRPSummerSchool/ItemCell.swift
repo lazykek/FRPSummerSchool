@@ -11,11 +11,14 @@ final class ItemCell: UICollectionViewCell {
 
     // MARK: - Properties
 
+    static let id = "ItemCellId"
     var item: Item? {
         didSet {
             updateUI()
         }
     }
+    var onAdding: ((String) -> Void)?
+    var onRemoving: ((String) -> Void)?
 
     // MARK: - UI
 
@@ -73,6 +76,20 @@ final class ItemCell: UICollectionViewCell {
         layer.borderWidth = 1
         layer.borderColor = UIColor.black.cgColor
 
+        plusButton.addAction(
+            .init(handler: { [weak self] _ in
+                self?.onAdding?(self?.item?.television.id ?? "")
+            }),
+            for: .touchUpInside
+        )
+
+        minusButton.addAction(
+            .init(handler: { [weak self] _ in
+                self?.onRemoving?(self?.item?.television.id ?? "")
+            }),
+            for: .touchUpInside
+        )
+
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -85,7 +102,12 @@ final class ItemCell: UICollectionViewCell {
             controls.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
-    
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        item = nil
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -94,6 +116,8 @@ final class ItemCell: UICollectionViewCell {
 
     private func updateUI() {
         guard let item else {
+            imageView.image = nil
+            countLabel.text = nil
             return
         }
         imageView.load(url: URL(string: item.television.url)!)

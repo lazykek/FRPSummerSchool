@@ -35,7 +35,6 @@ class ViewController: UIViewController {
 
     // MARK: - Properties
 
-    private var items: [Item] = []
     private let storage = Storage.shared
     private let disposeBag = DisposeBag()
 
@@ -44,18 +43,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        storage.items
-            .observe(on: MainScheduler.instance)
-            .subscribe(
-            onNext: { [weak self] items in
-                self?.items = items
-                self?.collectionView.reloadData()
-            },
-            onError: { error in
-                print(error)
-            }
-        )
-        .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
@@ -81,15 +68,21 @@ class ViewController: UIViewController {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.register(
             ItemCell.self,
-            forCellWithReuseIdentifier: "ItemCell"
+            forCellWithReuseIdentifier: ItemCell.id
         )
 
         Storage.shared.items
             .bind(
-                to: collectionView.rx.items(cellIdentifier: "ItemCell")
+                to: collectionView.rx.items(cellIdentifier: ItemCell.id)
             ) { index, item, cell in
                 let cell = cell as? ItemCell
                 cell?.item = item
+                cell?.onAdding = { [weak self] id in
+                    self?.storage.addItem(id: id)
+                }
+                cell?.onRemoving = { [weak self] id in
+                    self?.storage.removeItem(id: id)
+                }
             }
             .disposed(by: disposeBag)
 
