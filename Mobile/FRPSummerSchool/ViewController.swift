@@ -9,6 +9,11 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    // MARK: - Private properties
+
+    private var items: [Item] = []
+    private let storage = Storage.shared
+
     // MARK: - UI
 
     private let collectionView: UICollectionView = {
@@ -23,15 +28,21 @@ class ViewController: UIViewController {
         return collectionView
     }()
 
-    // MARK: - Properties
-
-    private let storage = Storage.shared
-
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        storage.onCartItems = { [weak self] items in
+            //TODO: - неправильный код, могут быть ошибки с многопоточностью
+            self?.items = items
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
     }
 
     // MARK: - Private methods
@@ -68,4 +79,29 @@ class ViewController: UIViewController {
         let vc = FiltersViewController(price: 0)
         self.navigationController?.present(vc, animated: true)
     }
+}
+
+extension ViewController: UICollectionViewDataSource {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        items.count
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ItemCell.id,
+            for: indexPath
+        ) as? ItemCell
+        cell?.item = items[indexPath.row]
+        return cell ?? UICollectionViewCell()
+    }
+}
+
+extension ViewController: UICollectionViewDelegate {
+
 }

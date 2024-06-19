@@ -23,8 +23,26 @@ final class Network {
 
     // MARK: - Internal methods
 
-    func loadTelevisions() {
-        //URL(string: "http://127.0.0.1:8080/items")!
+    func loadTelevisions(
+        completion: @escaping (Result<[Television], Error>) -> ()
+    ) {
+        URLSession.shared.dataTask(
+            with: URL(string: "http://127.0.0.1:8080/items")!
+        ) { data, _, error in
+            guard error == nil else {
+                completion(.failure(error!))
+                return
+            }
+            // передаем ошибку JSON
+            guard
+                let televisions = try? JSONDecoder().decode([Television].self, from: data ?? Data())
+            else {
+                completion(.failure(NetworkError.dataCorrupted))
+                return
+            }
+            completion(.success(televisions))
+        }
+        .resume()
     }
 
     // MARK: - Private methods

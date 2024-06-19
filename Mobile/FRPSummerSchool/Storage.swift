@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: Cart Item
 struct Item: Equatable {
     let television: Television
     var count: Int
@@ -17,6 +18,7 @@ final class Storage {
     // MARK: - Singleton
 
     static let shared: Storage = .init()
+    var onCartItems: (([Item]) -> ())?
 
     // MARK: - Properties
 
@@ -31,6 +33,14 @@ final class Storage {
     // MARK: - Init
 
     private init() {
+        Network.shared.loadTelevisions { [weak self] result in
+            switch result {
+            case .success(let televisions):
+                self?.onCartItems?(televisions.map { Item(television: $0, count: 0) })
+            case .failure(let failure):
+                print(failure)
+            }
+        }
     }
 }
 
