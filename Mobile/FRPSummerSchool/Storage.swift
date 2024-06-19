@@ -61,14 +61,13 @@ final class Storage {
     // MARK: - Init
 
     private init() {
-        Network.shared.loadTelevisions { [weak self] result in
-            switch result {
-            case .success(let televisions):
-                self?.items.onNext(televisions.map { .init(television: $0, count: 0) })
-            case .failure(let error):
-                self?.items.onError(error)
+        Network.shared.loadTelevisions()
+            .subscribe { [unowned self] in
+                items.onNext($0.map { Item(television: $0, count: 0) })
+            } onError: { [unowned self] error in
+                items.onError(error)
             }
-        }
+            .disposed(by: disposeBag)
     }
 }
 

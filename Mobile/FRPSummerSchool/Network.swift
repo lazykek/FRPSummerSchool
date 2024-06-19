@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 enum NetworkError: Error {
     case dataCorrupted
@@ -13,7 +14,7 @@ enum NetworkError: Error {
 
 final class Network {
 
-    // MARK: - Singleton
+    // MARK: - Internal properties
 
     static let shared: Network  = .init()
 
@@ -24,33 +25,30 @@ final class Network {
 
     // MARK: - Internal methods
 
-    func loadTelevisions(completion: @escaping (Result<[Television], Error>) -> ()) {
-        loadData(
-            request: URLRequest(url: URL(string: "http://127.0.0.1:8080/items")!),
-            completion: completion
-        )
+    func loadTelevisions() -> Observable<[Television]> {
+        load(request: URLRequest(url: URL(string: "http://127.0.0.1:8080/items")!))
     }
 
     // MARK: - Private methods
 
-    func loadData<T: Decodable>(
-        request: URLRequest,
-        completion: @escaping (Result<[T], Error>) -> ()
-    ) {
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard error == nil else {
-                completion(.failure(error!))
-                return
+    private func load<T: Decodable>(request: URLRequest) -> Observable<T> {
+        Observable.create { observer in
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                guard error == nil else {
+                    observer.onError(error!)
+                    return
+                }
+                guard
+                    let data,
+                    let items = try? JSONDecoder().decode(T.self, from: data)
+                else {
+                    observer.onError(NetworkError.dataCorrupted)
+                    return
+                }
+                observer.onNext(items)
             }
-            guard
-                let data,
-                let items = try? JSONDecoder().decode([T].self, from: data)
-            else {
-                completion(.failure(NetworkError.dataCorrupted))
-                return
-            }
-            completion(.success(items))
+            .resume()
+            return Disposables.create()
         }
-        .resume()
     }
 }
