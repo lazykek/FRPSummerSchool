@@ -6,25 +6,12 @@
 //
 
 import UIKit
-import RxSwift
 
 final class FiltersViewController: UIViewController {
 
     // MARK: - Internal properties
 
-    var price: Observable<Int> {
-        slider.rx.value
-            .map { Int($0) }
-            // лучше так не делать
-            .do(onNext: { [unowned self] value in
-                priceLabel.text = "\(value)"
-            })
-            .asObservable()
-    }
-
     // MARK: - Private properties
-
-    private let disposeBag = DisposeBag()
 
     // MARK: - UI
 

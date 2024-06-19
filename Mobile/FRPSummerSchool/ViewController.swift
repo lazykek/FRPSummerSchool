@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
 
 class ViewController: UIViewController {
 
@@ -28,61 +26,12 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
-    private let minPriceSubject = BehaviorSubject<Int>(value: 0)
-    private let disposeBag = DisposeBag()
-    private var filtersDisposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-    
-        Observable.combineLatest(
-            storage.items,
-            minPriceSubject
-        )
-        .compactMap { items, minPrice in
-            items
-                .filter { $0.television.price >= minPrice }
-        }
-        .distinctUntilChanged()
-        .bind(
-            to: collectionView.rx.items(cellIdentifier: ItemCell.id)
-        ) { index, item, cell in
-            let cell = cell as? ItemCell
-            cell?.item = item
-            cell?.onAdding = { [unowned self] id in
-                storage.addItem(id: id)
-            }
-            cell?.onRemoving = { [unowned self] id in
-                storage.removeItem(id: id)
-            }
-        }
-        .disposed(by: disposeBag)
-
-        collectionView
-            .rx
-            .itemSelected
-            .flatMap { [unowned self] indexPath in
-                self.storage.items
-                    .take(1)
-                    .map { items in
-                        items[indexPath.row]
-                    }
-            }
-            .observe(on: MainScheduler.instance)
-            .bind { [unowned self] item in
-                openDetails(item: item)
-            }
-            .disposed(by: disposeBag)
-
-        let barItem = UIBarButtonItem(systemItem: .edit)
-        barItem.rx.tap.bind { [unowned self] _ in
-            openFilters()
-        }
-        .disposed(by: disposeBag)
-        navigationItem.rightBarButtonItem = barItem
     }
 
     // MARK: - Private methods
@@ -116,26 +65,7 @@ class ViewController: UIViewController {
     }
 
     private func openFilters() {
-        let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
-//        luggy code
-//        vc.price.subscribe(minPriceSubject)
-//            .disposed(by: filtersDisposeBag)
-//        completed эммитится в общий флоу,
-//        и поэтому даже после пересоздания подписки
-//        таблица не обновляется
-        vc.price.subscribe { [unowned self] value in
-            minPriceSubject.onNext(value)
-        }
-        .disposed(by: disposeBag)
-
-        vc.modalPresentationStyle = .pageSheet
-        vc.sheetPresentationController?.detents = [
-            .custom(
-                resolver: { context in
-                    150
-                }
-            )
-        ]
+        let vc = FiltersViewController(price: 0)
         self.navigationController?.present(vc, animated: true)
     }
 }

@@ -6,15 +6,13 @@
 //
 
 import UIKit
-import RxSwift
 
 final class DetailsViewController: UIViewController {
 
-    // MARK: - Properties
+    // MARK: - Private properties
 
     private let id: String
     private let storage = Storage.shared
-    private let disposeBag = DisposeBag()
 
     // MARK: - UI
 
@@ -91,20 +89,6 @@ final class DetailsViewController: UIViewController {
             }),
             for: .touchUpInside
         )
-
-        storage.items
-            .compactMap { [unowned self] items in
-                items.first(where: { $0.television.id == id })
-            }
-            .observe(on: MainScheduler.instance)
-            .subscribe(
-                onNext: { [unowned self] item in
-                    updateUI(item: item)
-                }, onError: { error in
-                    print(error)
-                }
-            )
-            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods

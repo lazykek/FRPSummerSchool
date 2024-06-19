@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxSwift
 
 struct Item: Equatable {
     let television: Television
@@ -21,53 +20,17 @@ final class Storage {
 
     // MARK: - Properties
 
-    var items: BehaviorSubject<[Item]> = .init(value: [])
-    private let scheduler = SerialDispatchQueueScheduler(
-        internalSerialQueueName: "StorageSerialQueue"
-    )
-    private let disposeBag = DisposeBag()
-
     // MARK: - Methods
 
     func addItem(id: String) {
-        Observable.combineLatest(
-            items,
-            Observable.just(id)
-        )
-        .observe(on: scheduler)
-        .take(1)
-        .subscribe { [weak self] items, id in
-            var items = items
-            self?.items.onNext(items.increaseCount(id: id))
-        }
-        .disposed(by: disposeBag)
     }
 
     func removeItem(id: String) {
-        Observable.combineLatest(
-            items,
-            Observable.just(id)
-        )
-        // Reentrancy anomaly
-        // This is caused by the fact you are emitting elements into the subject while you’re reading from it, creating this instability
-        .take(1)
-        .subscribe { [weak self] items, id in
-            var items = items
-            self?.items.onNext(items.decreaseCount(id: id))
-        }
-        .disposed(by: disposeBag)
     }
 
     // MARK: - Init
 
     private init() {
-        Network.shared.loadTelevisions()
-            .subscribe { [unowned self] in
-                items.onNext($0.map { Item(television: $0, count: 0) })
-            } onError: { [unowned self] error in
-                items.onError(error)
-            }
-            .disposed(by: disposeBag)
     }
 }
 
