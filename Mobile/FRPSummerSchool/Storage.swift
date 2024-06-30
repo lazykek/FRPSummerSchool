@@ -31,6 +31,9 @@ final class Storage {
             stocks.map { Item(stock: $0, count: cart[$0.id] ?? 0) }
         }
     }
+    var cart: Observable<Int> {
+        cartSubject.map { $0.count }.asObservable()
+    }
     private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
     private let stocksSubject: BehaviorSubject<[Stock]> = .init(value: [])
     private let scheduler = SerialDispatchQueueScheduler(
@@ -49,7 +52,9 @@ final class Storage {
     func removeItem(id: String) {
         var cart = (try? cartSubject.value()) ?? [:]
         cart[id, default: 0] -= 1
-        cart[id] = max(cart[id, default: 0], 0)
+        if cart[id, default: 0] <= 0 {
+            cart[id] = nil
+        }
         cartSubject.onNext(cart)
     }
 

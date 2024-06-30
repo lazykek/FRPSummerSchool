@@ -25,6 +25,14 @@ class ViewController: UIViewController {
         return collectionView
     }()
 
+    private let cartView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.opacity = 0.0
+        view.backgroundColor = .blue
+        return view
+    }()
+
     // MARK: - Properties
 
     private let storage = Storage.shared
@@ -85,6 +93,29 @@ class ViewController: UIViewController {
         }
         .disposed(by: disposeBag)
         navigationItem.rightBarButtonItem = barItem
+
+        let itemsMoving = Observable.merge(
+            collectionView.rx.willBeginDragging.map { true },
+            collectionView.rx.didEndDecelerating.map { false },
+            collectionView.rx.didEndDragging.asObservable()
+        )
+            .startWith(false)
+            .distinctUntilChanged()
+
+        Observable.combineLatest(
+            storage.cart,
+            itemsMoving
+        )
+        .map { count, itemsMoving in
+            count > 0 && !itemsMoving
+        }
+        .observe(on: MainScheduler.instance)
+        .subscribe(onNext: { [unowned self] showCart in
+            UIView.animate(withDuration: 0.3) {
+                self.cartView.layer.opacity = showCart ? 1 : 0
+            }
+        })
+        .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
@@ -94,11 +125,17 @@ class ViewController: UIViewController {
 
         view.backgroundColor = .systemBackground
         view.addSubview(collectionView)
+        view.addSubview(cartView)
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 550),
+
+            cartView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            cartView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            cartView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            cartView.heightAnchor.constraint(equalToConstant: 150)
         ])
 
         collectionView.contentInset = .init(top: 16, left: 16, bottom: 16, right: 16)
