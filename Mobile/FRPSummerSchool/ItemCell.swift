@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxCocoa
 
 final class ItemCell: UICollectionViewCell {
 
@@ -17,8 +18,20 @@ final class ItemCell: UICollectionViewCell {
             updateUI()
         }
     }
-    var onAdding: ((String) -> Void)?
-    var onRemoving: ((String) -> Void)?
+    var plusTap: Driver<String> {
+        plusButton.rx.tap
+            .asDriver()
+            .flatMap { [unowned self] in
+                Driver.just(item?.stock.id ?? "")
+            }
+    }
+    var minusTap: Driver<String> {
+        minusButton.rx.tap
+            .asDriver()
+            .flatMap { [unowned self] in
+                Driver.just(item?.stock.id ?? "")
+            }
+    }
 
     // MARK: - UI
 
@@ -76,25 +89,11 @@ final class ItemCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-
-        plusButton.addAction(
-            .init(handler: { [weak self] _ in
-                self?.onAdding?(self?.item?.stock.id ?? "")
-            }),
-            for: .touchUpInside
-        )
-
-        minusButton.addAction(
-            .init(handler: { [weak self] _ in
-                self?.onRemoving?(self?.item?.stock.id ?? "")
-            }),
-            for: .touchUpInside
-        )
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        item = nil
+        updateUI()
     }
 
     required init?(coder: NSCoder) {

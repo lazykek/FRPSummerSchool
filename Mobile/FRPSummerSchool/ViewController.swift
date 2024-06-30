@@ -30,6 +30,7 @@ class ViewController: UIViewController {
     private let storage = Storage.shared
     private let minPriceSubject = BehaviorSubject<Int>(value: 0)
     private let disposeBag = DisposeBag()
+    private var cellsDisposeBag = DisposeBag()
     private var filtersDisposeBag = DisposeBag()
 
     // MARK: - Lifecycle
@@ -47,17 +48,18 @@ class ViewController: UIViewController {
                 .filter { $0.stock.price >= minPrice }
         }
         .distinctUntilChanged()
+        .do(onNext: { [unowned self] _ in
+            cellsDisposeBag = DisposeBag()
+        })
         .bind(
             to: collectionView.rx.items(cellIdentifier: ItemCell.id)
-        ) { index, item, cell in
+        ) { [unowned self] index, item, cell in
             let cell = cell as? ItemCell
             cell?.item = item
-            cell?.onAdding = { [unowned self] id in
-                storage.addItem(id: id)
-            }
-            cell?.onRemoving = { [unowned self] id in
-                storage.removeItem(id: id)
-            }
+            cell?.plusTap.drive(onNext: storage.addItem(id:))
+                .disposed(by: cellsDisposeBag)
+            cell?.minusTap.drive(onNext: storage.removeItem(id:))
+                .disposed(by: cellsDisposeBag)
         }
         .disposed(by: disposeBag)
 
