@@ -79,14 +79,14 @@ final class ItemCell: UICollectionViewCell {
 
         plusButton.addAction(
             .init(handler: { [weak self] _ in
-                self?.onAdding?(self?.item?.television.id ?? "")
+                self?.onAdding?(self?.item?.stock.id ?? "")
             }),
             for: .touchUpInside
         )
 
         minusButton.addAction(
             .init(handler: { [weak self] _ in
-                self?.onRemoving?(self?.item?.television.id ?? "")
+                self?.onRemoving?(self?.item?.stock.id ?? "")
             }),
             for: .touchUpInside
         )
@@ -111,9 +111,9 @@ final class ItemCell: UICollectionViewCell {
             countLabel.text = nil
             return
         }
-        colorView.backgroundColor = item.television.color
-        nameLabel.text = item.television.name
-        priceLabel.text = "\(item.television.price) руб"
+        colorView.backgroundColor = item.stock.color
+        nameLabel.text = item.stock.name
+        priceLabel.text = "\(item.stock.price) у.е."
         countLabel.text = "\(item.count)"
     }
 

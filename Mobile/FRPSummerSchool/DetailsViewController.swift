@@ -94,7 +94,7 @@ final class DetailsViewController: UIViewController {
 
         storage.items
             .compactMap { [unowned self] items in
-                items.first(where: { $0.television.id == id })
+                items.first(where: { $0.stock.id == id })
             }
             .observe(on: MainScheduler.instance)
             .subscribe(
@@ -110,7 +110,7 @@ final class DetailsViewController: UIViewController {
     // MARK: - Private methods
 
     private func updateUI(item: Item) {
-        titleLabel.text = "\(item.television.name)"
+        titleLabel.text = "\(item.stock.name)"
         countLabel.text = "\(item.count)"
     }
 

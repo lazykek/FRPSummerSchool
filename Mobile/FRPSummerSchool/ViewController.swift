@@ -44,7 +44,7 @@ class ViewController: UIViewController {
         )
         .compactMap { items, minPrice in
             items
-                .filter { $0.television.price >= minPrice }
+                .filter { $0.stock.price >= minPrice }
         }
         .distinctUntilChanged()
         .bind(
@@ -88,7 +88,7 @@ class ViewController: UIViewController {
     // MARK: - Private methods
 
     private func setupUI() {
-        title = "Телевизоры"
+        title = "Акции"
 
         view.backgroundColor = .systemBackground
         view.addSubview(collectionView)
@@ -108,7 +108,7 @@ class ViewController: UIViewController {
     }
 
     private func openDetails(item: Item) {
-        let vc = DetailsViewController(id: item.television.id)
+        let vc = DetailsViewController(id: item.stock.id)
         self.navigationController?.pushViewController(
             vc,
             animated: true

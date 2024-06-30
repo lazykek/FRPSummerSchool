@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 struct Item: Equatable {
-    let television: Television
+    let stock: Stock
     var count: Int
 }
 
@@ -61,9 +61,9 @@ final class Storage {
     // MARK: - Init
 
     private init() {
-        Network.shared.loadTelevisions()
+        Network.shared.stocks
             .subscribe { [unowned self] in
-                items.onNext($0.map { Item(television: $0, count: 0) })
+                items.onNext($0.map { Item(stock: $0, count: 0) })
             } onError: { [unowned self] error in
                 items.onError(error)
             }
@@ -74,7 +74,7 @@ final class Storage {
 private extension Array where Array.Element == Item {
     mutating func increaseCount(id: String) -> Self {
         guard
-            let index = firstIndex(where: { $0.television.id == id })
+            let index = firstIndex(where: { $0.stock.id == id })
         else {
             return self
         }
@@ -84,7 +84,7 @@ private extension Array where Array.Element == Item {
 
     mutating func decreaseCount(id: String) -> Self {
         guard
-            let index = firstIndex(where: { $0.television.id == id })
+            let index = firstIndex(where: { $0.stock.id == id })
         else {
             return self
         }

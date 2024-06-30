@@ -1,5 +1,5 @@
 //
-//  Television.swift
+//  Stock.swift
 //  FRPSummerSchool
 //
 //  Created by Ilia Cherkasov on 16.06.2024.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct Television: Decodable, Equatable {
+struct Stock: Decodable, Equatable {
     let name: String
     let price: Int
     let color: UIColor

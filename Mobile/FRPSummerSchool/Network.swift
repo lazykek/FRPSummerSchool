@@ -18,15 +18,7 @@ final class Network {
     // MARK: - Internal properties
 
     static let shared: Network  = .init()
-
-    // MARK: - Init
-
-    private init() {
-    }
-
-    // MARK: - Internal methods
-
-    func loadTelevisions() -> Observable<[Television]> {
+    lazy var stocks: Observable<[Stock]> = {
         Observable<Int>
             .interval(.seconds(1), scheduler: MainScheduler.instance)
             .flatMap { [unowned self] _ in
@@ -38,6 +30,11 @@ final class Network {
                 )
                 .asObservable()
             }
+    }()
+
+    // MARK: - Init
+
+    private init() {
     }
 
     // MARK: - Private methods
