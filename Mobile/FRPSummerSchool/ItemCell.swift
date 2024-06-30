@@ -22,10 +22,9 @@ final class ItemCell: UICollectionViewCell {
 
     // MARK: - UI
 
-    private let imageView: UIImageView = {
+    private let colorView: UIView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .lightGray
         return imageView
     }()
 
@@ -106,20 +105,20 @@ final class ItemCell: UICollectionViewCell {
 
     private func updateUI() {
         guard let item else {
-            imageView.image = nil
+            colorView.backgroundColor = .clear
             nameLabel.text = nil
             priceLabel.text = nil
             countLabel.text = nil
             return
         }
-        imageView.load(url: URL(string: item.television.url)!)
+        colorView.backgroundColor = item.television.color
         nameLabel.text = item.television.name
         priceLabel.text = "\(item.television.price) руб"
         countLabel.text = "\(item.count)"
     }
 
     private func setupUI() {
-        contentView.addSubview(imageView)
+        contentView.addSubview(colorView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(priceLabel)
         contentView.addSubview(controls)
@@ -134,12 +133,12 @@ final class ItemCell: UICollectionViewCell {
         layer.borderColor = UIColor.black.cgColor
 
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 150),
+            colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            colorView.heightAnchor.constraint(equalToConstant: 150),
 
-            nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+            nameLabel.topAnchor.constraint(equalTo: colorView.bottomAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5),
 

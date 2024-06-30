@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 enum NetworkError: Error {
     case dataCorrupted
@@ -26,26 +27,36 @@ final class Network {
     // MARK: - Internal methods
 
     func loadTelevisions() -> Observable<[Television]> {
-        load(request: URLRequest(url: URL(string: "http://127.0.0.1:8080/items")!))
+        Observable<Int>
+            .interval(.seconds(1), scheduler: MainScheduler.instance)
+            .flatMap { [unowned self] _ in
+                load(
+                    request:
+                        URLRequest(
+                            url: URL(string: "http://127.0.0.1:8080/items")!
+                        )
+                )
+                .asObservable()
+            }
     }
 
     // MARK: - Private methods
 
-    private func load<T: Decodable>(request: URLRequest) -> Observable<T> {
-        Observable.create { observer in
+    private func load<T: Decodable>(request: URLRequest) -> Single<T> {
+        Single<T>.create { single in
             URLSession.shared.dataTask(with: request) { data, response, error in
                 guard error == nil else {
-                    observer.onError(error!)
+                    single(.failure(error!))
                     return
                 }
                 guard
                     let data,
                     let items = try? JSONDecoder().decode(T.self, from: data)
                 else {
-                    observer.onError(NetworkError.dataCorrupted)
+                    single(.failure(NetworkError.dataCorrupted))
                     return
                 }
-                observer.onNext(items)
+                single(.success(items))
             }
             .resume()
             return Disposables.create()

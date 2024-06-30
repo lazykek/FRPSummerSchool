@@ -110,7 +110,6 @@ final class DetailsViewController: UIViewController {
     // MARK: - Private methods
 
     private func updateUI(item: Item) {
-        imageView.load(url: URL(string: item.television.url)!)
         titleLabel.text = "\(item.television.name)"
         countLabel.text = "\(item.count)"
     }
