@@ -43,6 +43,7 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
+    private let minPriceSubject = BehaviorSubject<Int>(value: 0)
     private let disposeBag = DisposeBag()
     private var cellsDisposeBag = DisposeBag()
 
@@ -52,23 +53,30 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
 
-        storage.items
-            .do(onNext: { [unowned self] _ in
-                cellsDisposeBag = DisposeBag()
-            })
-            .bind(
-                to: collectionView.rx.items(cellIdentifier: ItemCell.id)
-            ) { [unowned self] index, item, cell in
-                let cell = cell as? ItemCell
-                cell?.item = item
-                cell?.plusTap
-                    .drive(onNext: storage.addItem(id:))
-                    .disposed(by: cellsDisposeBag)
-                cell?.minusTap
-                    .drive(onNext: storage.removeItem(id:))
-                    .disposed(by: cellsDisposeBag)
-            }
-            .disposed(by: disposeBag)
+        Observable.combineLatest(
+            storage.items,
+            minPriceSubject
+        )
+        .compactMap { items, minPrice in
+            items
+                .filter { $0.stock.price >= minPrice }
+        }
+        .do(onNext: { [unowned self] _ in
+            cellsDisposeBag = DisposeBag()
+        })
+        .bind(
+            to: collectionView.rx.items(cellIdentifier: ItemCell.id)
+        ) { [unowned self] index, item, cell in
+            let cell = cell as? ItemCell
+            cell?.item = item
+            cell?.plusTap
+                .drive(onNext: storage.addItem(id:))
+                .disposed(by: cellsDisposeBag)
+            cell?.minusTap
+                .drive(onNext: storage.removeItem(id:))
+                .disposed(by: cellsDisposeBag)
+        }
+        .disposed(by: disposeBag)
 
         collectionView.rx.itemSelected
             .flatMap { [unowned self] indexPath in
@@ -133,7 +141,9 @@ class ViewController: UIViewController {
     }
 
     private func openFilters() {
-        let vc = FiltersViewController(price: 0)
+        let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
+        vc.price.subscribe(minPriceSubject)
+            .disposed(by: disposeBag)
 
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [
