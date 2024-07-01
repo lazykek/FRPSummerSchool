@@ -18,11 +18,10 @@ final class DetailsViewController: UIViewController {
 
     // MARK: - UI
 
-    private let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .lightGray
-        return imageView
+    private let colorView: UIView = {
+        let colorView = UIImageView()
+        colorView.translatesAutoresizingMaskIntoConstraints = false
+        return colorView
     }()
 
     private let titleLabel: UILabel = {
@@ -110,6 +109,7 @@ final class DetailsViewController: UIViewController {
     // MARK: - Private methods
 
     private func updateUI(item: CartItem) {
+        colorView.backgroundColor = item.stock.color
         titleLabel.text = "\(item.stock.name)"
         countLabel.text = "\(item.count)"
     }
@@ -117,7 +117,7 @@ final class DetailsViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .systemBackground
 
-        view.addSubview(imageView)
+        view.addSubview(colorView)
         view.addSubview(titleLabel)
         view.addSubview(controls)
 
@@ -126,12 +126,12 @@ final class DetailsViewController: UIViewController {
         controls.addArrangedSubview(minusButton)
 
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 300),
+            colorView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            colorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            colorView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            colorView.heightAnchor.constraint(equalToConstant: 300),
 
-            titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+            titleLabel.topAnchor.constraint(equalTo: colorView.bottomAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 

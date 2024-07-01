@@ -36,9 +36,9 @@ final class ItemCell: UICollectionViewCell {
     // MARK: - UI
 
     private let colorView: UIView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+        let colorView = UIImageView()
+        colorView.translatesAutoresizingMaskIntoConstraints = false
+        return colorView
     }()
 
     private let nameLabel: UILabel = {
