@@ -43,6 +43,7 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
+    private let minPriceSubject = BehaviorSubject<Int>(value: 0)
     private let disposeBag = DisposeBag()
     private var cellsDisposeBag = DisposeBag()
 
@@ -133,7 +134,9 @@ class ViewController: UIViewController {
     }
 
     private func openFilters() {
-        let vc = FiltersViewController(price: 0)
+        let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
+        vc.price.subscribe(minPriceSubject)
+            .disposed(by: disposeBag)
 
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [
