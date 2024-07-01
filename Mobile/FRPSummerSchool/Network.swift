@@ -7,7 +7,6 @@
 
 import Foundation
 import RxSwift
-import RxCocoa
 
 enum NetworkError: Error {
     case dataCorrupted
@@ -19,21 +18,7 @@ final class Network {
 
     static let shared: Network  = .init()
     lazy var stocks: Observable<[Stock]> = {
-        Observable<Int>
-            .timer(
-                .milliseconds(0),
-                period: .milliseconds(1500),
-                scheduler: MainScheduler.instance
-            )
-            .flatMap { [unowned self] ewr in
-                load(
-                    request:
-                        URLRequest(
-                            url: URL(string: "http://127.0.0.1:8080/items")!
-                        )
-                )
-                .asObservable()
-            }
+        Observable.just([])
     }()
 
     // MARK: - Init
@@ -43,24 +28,4 @@ final class Network {
 
     // MARK: - Private methods
 
-    private func load<T: Decodable>(request: URLRequest) -> Single<T> {
-        Single<T>.create { single in
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard error == nil else {
-                    single(.failure(error!))
-                    return
-                }
-                guard
-                    let data,
-                    let items = try? JSONDecoder().decode(T.self, from: data)
-                else {
-                    single(.failure(NetworkError.dataCorrupted))
-                    return
-                }
-                single(.success(items))
-            }
-            .resume()
-            return Disposables.create()
-        }
-    }
 }
