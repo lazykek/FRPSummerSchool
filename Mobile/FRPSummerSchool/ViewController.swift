@@ -69,6 +69,19 @@ class ViewController: UIViewController {
                     .disposed(by: cellsDisposeBag)
             }
             .disposed(by: disposeBag)
+
+        collectionView.rx.itemSelected
+            .flatMap { [unowned self] indexPath in
+                self.storage.items
+                    .take(1)
+                    .map { items in
+                        items[indexPath.row]
+                    }
+            }
+            .bind { [unowned self] item in
+                openDetails(item: item)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
