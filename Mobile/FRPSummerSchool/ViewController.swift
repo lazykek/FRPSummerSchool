@@ -103,6 +103,29 @@ class ViewController: UIViewController {
         }
         .disposed(by: disposeBag)
         navigationItem.rightBarButtonItem = barItem
+
+        let itemsMoving = Observable.merge(
+            collectionView.rx.willBeginDragging.map { true },
+            collectionView.rx.didEndDecelerating.map { false },
+            collectionView.rx.didEndDragging.asObservable()
+        )
+            .startWith(false)
+            .distinctUntilChanged()
+
+        Observable.combineLatest(
+            storage.cart,
+            itemsMoving
+        )
+        .map { count, itemsMoving in
+            count > 0 && !itemsMoving
+        }
+        .observe(on: MainScheduler.instance)
+        .subscribe(onNext: { [unowned self] showCart in
+            UIView.animate(withDuration: 0.3) {
+                self.cartView.layer.opacity = showCart ? 1 : 0
+            }
+        })
+        .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
