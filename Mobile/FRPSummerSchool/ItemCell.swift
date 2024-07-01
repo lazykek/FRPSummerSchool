@@ -13,7 +13,7 @@ final class ItemCell: UICollectionViewCell {
     // MARK: - Properties
 
     static let id = "ItemCellId"
-    var item: Item? {
+    var item: CartItem? {
         didSet {
             updateUI()
         }

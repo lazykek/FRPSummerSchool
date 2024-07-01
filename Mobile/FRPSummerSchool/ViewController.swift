@@ -164,7 +164,7 @@ class ViewController: UIViewController {
         )
     }
 
-    private func openDetails(item: Item) {
+    private func openDetails(item: CartItem) {
         let vc = DetailsViewController(id: item.stock.id)
         self.navigationController?.pushViewController(
             vc,

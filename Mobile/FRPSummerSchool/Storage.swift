@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-struct Item: Equatable {
+struct CartItem: Equatable {
     let stock: Stock
     var count: Int
 }
@@ -21,14 +21,14 @@ final class Storage {
 
     // MARK: - Properties
 
-    var items: Observable<[Item]> {
+    var items: Observable<[CartItem]> {
         Observable.combineLatest(
             stocksSubject,
             cartSubject
         )
         .observe(on: scheduler)
         .map { stocks, cart in
-            stocks.map { Item(stock: $0, count: cart[$0.id] ?? 0) }
+            stocks.map { CartItem(stock: $0, count: cart[$0.id] ?? 0) }
         }
     }
     var cart: Observable<Int> {

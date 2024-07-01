@@ -109,7 +109,7 @@ final class DetailsViewController: UIViewController {
 
     // MARK: - Private methods
 
-    private func updateUI(item: Item) {
+    private func updateUI(item: CartItem) {
         titleLabel.text = "\(item.stock.name)"
         countLabel.text = "\(item.count)"
     }
