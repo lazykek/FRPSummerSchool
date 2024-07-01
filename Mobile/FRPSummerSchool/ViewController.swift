@@ -13,6 +13,13 @@ class ViewController: UIViewController {
 
     // MARK: - UI
 
+    private let searchBar: UISearchBar = {
+        let bar = UISearchBar()
+        bar.translatesAutoresizingMaskIntoConstraints = false
+        bar.placeholder = "Поиск"
+        return bar
+    }()
+
     private let collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.itemSize = .init(width: 200, height: 250)
@@ -49,11 +56,17 @@ class ViewController: UIViewController {
     
         Observable.combineLatest(
             storage.items,
-            minPriceSubject
+            minPriceSubject,
+            searchBar.rx.text
+                .compactMap { $0?.uppercased() }
+                .distinctUntilChanged()
         )
-        .compactMap { items, minPrice in
+        .compactMap { items, minPrice, searchText in
             items
                 .filter { $0.stock.price >= minPrice }
+                .filter {
+                    !searchText.isEmpty ? $0.stock.name.uppercased().contains(searchText) : true
+                }
         }
         .distinctUntilChanged()
         .do(onNext: { [unowned self] _ in
@@ -126,8 +139,13 @@ class ViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(collectionView)
         view.addSubview(cartView)
+        view.addSubview(searchBar)
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.heightAnchor.constraint(equalToConstant: 550),
