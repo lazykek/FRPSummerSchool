@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxCocoa
 
 final class ItemCell: UICollectionViewCell {
 
@@ -16,6 +17,20 @@ final class ItemCell: UICollectionViewCell {
         didSet {
             updateUI()
         }
+    }
+    var plusTap: Driver<String> {
+        plusButton.rx.tap
+            .asDriver()
+            .flatMap { [unowned self] in
+                Driver.just(item?.stock.id ?? "")
+            }
+    }
+    var minusTap: Driver<String> {
+        minusButton.rx.tap
+            .asDriver()
+            .flatMap { [unowned self] in
+                Driver.just(item?.stock.id ?? "")
+            }
     }
 
     // MARK: - UI
