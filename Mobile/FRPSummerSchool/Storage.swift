@@ -22,24 +22,37 @@ final class Storage {
     // MARK: - Properties
 
     var items: Observable<[CartItem]> {
-        stocksSubject
-            .map { stocks in
-                stocks.map { CartItem(stock: $0, count: 0) }
-            }
+        Observable.combineLatest(
+            stocksSubject,
+            cartSubject
+        )
+        .map { stocks, cart in
+            stocks.map { CartItem(stock: $0, count: cart[$0.id] ?? 0) }
+        }
     }
     var cart: Observable<Int> {
-        Observable.just(0)
+        cartSubject.map { $0.count }.asObservable()
     }
 
+    private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
     private let stocksSubject: BehaviorSubject<[Stock]> = .init(value: [])
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
     func addItem(id: String) {
+        var cart = (try? cartSubject.value()) ?? [:]
+        cart[id, default: 0] += 1
+        cartSubject.onNext(cart)
     }
 
     func removeItem(id: String) {
+        var cart = (try? cartSubject.value()) ?? [:]
+        cart[id, default: 0] -= 1
+        if cart[id, default: 0] <= 0 {
+            cart[id] = nil
+        }
+        cartSubject.onNext(cart)
     }
 
     // MARK: - Init
