@@ -43,12 +43,22 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
+    private let disposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+
+        storage.items
+            .bind(
+                to: collectionView.rx.items(cellIdentifier: ItemCell.id)
+            ) { index, item, cell in
+                let cell = cell as? ItemCell
+                cell?.item = item
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
