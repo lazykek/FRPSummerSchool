@@ -20,8 +20,12 @@ final class Network {
     static let shared: Network  = .init()
     lazy var stocks: Observable<[Stock]> = {
         Observable<Int>
-            .interval(.milliseconds(1500), scheduler: MainScheduler.instance)
-            .flatMap { [unowned self] _ in
+            .timer(
+                .milliseconds(0),
+                period: .milliseconds(1500),
+                scheduler: MainScheduler.instance
+            )
+            .flatMap { [unowned self] ewr in
                 load(
                     request:
                         URLRequest(
