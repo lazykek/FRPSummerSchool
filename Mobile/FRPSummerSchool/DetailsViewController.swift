@@ -90,6 +90,19 @@ final class DetailsViewController: UIViewController {
             }),
             for: .touchUpInside
         )
+
+        storage.items
+            .compactMap { [unowned self] items in
+                items.first(where: { $0.stock.id == id })
+            }
+            .subscribe(
+                onNext: { [unowned self] item in
+                    updateUI(item: item)
+                }, onError: { error in
+                    print(error)
+                }
+            )
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
