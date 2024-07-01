@@ -22,47 +22,22 @@ final class Storage {
     // MARK: - Properties
 
     var items: Observable<[CartItem]> {
-        Observable.combineLatest(
-            stocksSubject,
-            cartSubject
-        )
-        .observe(on: scheduler)
-        .map { stocks, cart in
-            stocks.map { CartItem(stock: $0, count: cart[$0.id] ?? 0) }
-        }
+        Observable.just([])
     }
     var cart: Observable<Int> {
-        cartSubject.map { $0.count }.asObservable()
+        Observable.just(0)
     }
-    private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
-    private let stocksSubject: BehaviorSubject<[Stock]> = .init(value: [])
-    private let scheduler = SerialDispatchQueueScheduler(
-        internalSerialQueueName: "StorageSerialQueue"
-    )
-    private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
     func addItem(id: String) {
-        var cart = (try? cartSubject.value()) ?? [:]
-        cart[id, default: 0] += 1
-        cartSubject.onNext(cart)
     }
 
     func removeItem(id: String) {
-        var cart = (try? cartSubject.value()) ?? [:]
-        cart[id, default: 0] -= 1
-        if cart[id, default: 0] <= 0 {
-            cart[id] = nil
-        }
-        cartSubject.onNext(cart)
     }
 
     // MARK: - Init
 
     private init() {
-        Network.shared.stocks
-            .subscribe(stocksSubject)
-            .disposed(by: self.disposeBag)
     }
 }
