@@ -72,6 +72,7 @@ class ViewController: UIViewController {
         .do(onNext: { [unowned self] _ in
             cellsDisposeBag = DisposeBag()
         })
+        .catchAndReturn([])
         .bind(
             to: collectionView.rx.items(cellIdentifier: ItemCell.id)
         ) { [unowned self] index, item, cell in
