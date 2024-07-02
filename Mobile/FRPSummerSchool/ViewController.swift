@@ -142,8 +142,10 @@ class ViewController: UIViewController {
 
     private func openFilters() {
         let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
-        vc.price.subscribe(minPriceSubject)
-            .disposed(by: disposeBag)
+        vc.price.subscribe { [unowned self] value in
+            minPriceSubject.onNext(value)
+        }
+        .disposed(by: disposeBag)
 
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [
