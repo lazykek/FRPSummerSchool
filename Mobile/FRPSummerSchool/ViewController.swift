@@ -57,6 +57,7 @@ class ViewController: UIViewController {
             storage.items,
             minPriceSubject,
             searchBar.rx.text
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .compactMap { $0?.uppercased() }
         )
         .compactMap { items, minPrice, searchText in
