@@ -55,11 +55,16 @@ class ViewController: UIViewController {
 
         Observable.combineLatest(
             storage.items,
-            minPriceSubject
+            minPriceSubject,
+            searchBar.rx.text
+                .compactMap { $0?.uppercased() }
         )
-        .compactMap { items, minPrice in
+        .compactMap { items, minPrice, searchText in
             items
                 .filter { $0.stock.price >= minPrice }
+                .filter {
+                    !searchText.isEmpty ? $0.stock.name.uppercased().contains(searchText) : true
+                }
         }
         .do(onNext: { [unowned self] _ in
             cellsDisposeBag = DisposeBag()
