@@ -18,7 +18,13 @@ final class Network {
 
     static let shared: Network  = .init()
     lazy var stocks: Observable<[Stock]> = {
-        Observable.just([])
+        load(
+            request:
+                URLRequest(
+                    url: URL(string: "http://127.0.0.1:8080/items")!
+                )
+        )
+        .asObservable()
     }()
 
     // MARK: - Init
