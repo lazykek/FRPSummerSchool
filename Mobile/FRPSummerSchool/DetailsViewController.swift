@@ -95,6 +95,7 @@ final class DetailsViewController: UIViewController {
             .compactMap { [unowned self] items in
                 items.first(where: { $0.stock.id == id })
             }
+            .observe(on: MainScheduler.instance)
             .subscribe(
                 onNext: { [unowned self] item in
                     updateUI(item: item)
