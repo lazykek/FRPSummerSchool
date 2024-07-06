@@ -74,13 +74,12 @@ class ViewController: UIViewController {
         })
         .catchAndReturn([])
         .bind(
-            to: collectionView.rx.items(cellIdentifier: ItemCell.id)
+            to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
         ) { [unowned self] index, item, cell in
-            let cell = cell as? ItemCell
-            cell?.item = item
-            cell?.plusTap.drive(onNext: storage.addItem(id:))
+            cell.item = item
+            cell.plusTap.drive(onNext: storage.addItem(id:))
                 .disposed(by: cellsDisposeBag)
-            cell?.minusTap.drive(onNext: storage.removeItem(id:))
+            cell.minusTap.drive(onNext: storage.removeItem(id:))
                 .disposed(by: cellsDisposeBag)
         }
         .disposed(by: disposeBag)
