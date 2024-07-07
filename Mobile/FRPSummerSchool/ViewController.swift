@@ -68,21 +68,33 @@ class ViewController: UIViewController {
                     !searchText.isEmpty ? $0.stock.name.uppercased().contains(searchText) : true
                 }
         }
-        .distinctUntilChanged()
-        .do(onNext: { [unowned self] _ in
-            cellsDisposeBag = DisposeBag()
-        })
         .catchAndReturn([])
         .bind(
             to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
-        ) { [unowned self] index, item, cell in
+        ) { index, item, cell in
             cell.item = item
-            cell.plusTap.drive(onNext: storage.addItem(id:))
-                .disposed(by: cellsDisposeBag)
-            cell.minusTap.drive(onNext: storage.removeItem(id:))
-                .disposed(by: cellsDisposeBag)
         }
         .disposed(by: disposeBag)
+
+        let visibleCell = collectionView.rx.willDisplayCell
+            .asDriver()
+            .compactMap { cell, id in
+                cell as? ItemCell
+            }
+        
+        visibleCell
+            .flatMap { cell in
+                cell.plusTap
+            }
+            .drive(onNext: storage.addItem(id:))
+            .disposed(by: disposeBag)
+
+        visibleCell
+            .flatMap { cell in
+                cell.minusTap
+            }
+            .drive(onNext: storage.removeItem(id:))
+            .disposed(by: disposeBag)
 
         collectionView
             .rx
