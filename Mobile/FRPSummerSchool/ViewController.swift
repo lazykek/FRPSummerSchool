@@ -56,17 +56,11 @@ class ViewController: UIViewController {
     
         Observable.combineLatest(
             storage.items,
-            minPriceSubject,
-            searchBar.rx.text
-                .compactMap { $0?.uppercased() }
-                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            minPriceSubject
         )
-        .compactMap { items, minPrice, searchText in
+        .compactMap { items, minPrice in
             items
                 .filter { $0.stock.price >= minPrice }
-                .filter {
-                    !searchText.isEmpty ? $0.stock.name.uppercased().contains(searchText) : true
-                }
         }
         .catchAndReturn([])
         .bind(
@@ -81,7 +75,7 @@ class ViewController: UIViewController {
             .compactMap { cell, id in
                 cell as? ItemCell
             }
-        
+
         visibleCell
             .flatMap { cell in
                 cell.plusTap
@@ -141,6 +135,13 @@ class ViewController: UIViewController {
             }
         })
         .disposed(by: disposeBag)
+
+        searchBar.rx.text
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .subscribe { [unowned self] text in
+                storage.setSearchText(text ?? "")
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods

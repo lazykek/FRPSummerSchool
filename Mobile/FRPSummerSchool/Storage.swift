@@ -58,6 +58,10 @@ final class Storage {
         cartSubject.onNext(cart)
     }
 
+    func setSearchText(_ text: String) {
+        Network.shared.setSearchText(text)
+    }
+
     // MARK: - Init
 
     private init() {

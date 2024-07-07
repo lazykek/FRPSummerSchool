@@ -14,7 +14,13 @@ import Vapor
 func routes(_ app: Application) throws {
   app.get("items") { req async -> String in
     try? await Task.sleep(for: timeout)
-    return await items.update().toJson
+    let searchText = req.query[String.self, at: "search_text"] ?? ""
+    return await items
+      .update()
+      .filter {
+        !searchText.isEmpty ? $0.name.lowercased().contains(searchText.lowercased()) : true
+      }
+      .toJson
   }
 }
 
