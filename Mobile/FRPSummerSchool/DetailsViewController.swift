@@ -10,7 +10,7 @@ import RxSwift
 
 final class DetailsViewController: UIViewController {
 
-    // MARK: - Properties
+    // MARK: - Private properties
 
     private let id: String
     private let storage = Storage.shared
@@ -77,19 +77,17 @@ final class DetailsViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
 
-        plusButton.addAction(
-            .init(handler: { [unowned self] _ in
+        plusButton.rx.tap
+            .subscribe { [unowned self] _ in
                 storage.addItem(id: id)
-            }),
-            for: .touchUpInside
-        )
+            }
+            .disposed(by: disposeBag)
 
-        minusButton.addAction(
-            .init(handler: { [unowned self] _ in
+        minusButton.rx.tap
+            .subscribe { [unowned self] _ in
                 storage.removeItem(id: id)
-            }),
-            for: .touchUpInside
-        )
+            }
+            .disposed(by: disposeBag)
 
         storage.items
             .compactMap { [unowned self] items in
