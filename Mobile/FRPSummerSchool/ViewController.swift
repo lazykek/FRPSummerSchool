@@ -32,11 +32,11 @@ class ViewController: UIViewController {
         return collectionView
     }()
 
-    private let cartView: UIView = {
-        let view = UIView()
+    private let cartView: CartView = {
+        let view = CartView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.opacity = 0.0
-        view.backgroundColor = .blue
+        view.backgroundColor = .blue.withAlphaComponent(0.3)
         return view
     }()
 
@@ -122,12 +122,13 @@ class ViewController: UIViewController {
             itemsMoving
         )
         .map { count, itemsMoving in
-            count > 0 && !itemsMoving
+            (count, count > 0 && !itemsMoving)
         }
         .observe(on: MainScheduler.instance)
-        .subscribe(onNext: { [unowned self] showCart in
-            UIView.animate(withDuration: 0.3) {
-                self.cartView.layer.opacity = showCart ? 1 : 0
+        .subscribe(onNext: { count, showCart in
+            UIView.animate(withDuration: 0.3) { [unowned self] in
+                cartView.itemsCount = count
+                cartView.layer.opacity = showCart ? 1 : 0
             }
         })
         .disposed(by: disposeBag)
