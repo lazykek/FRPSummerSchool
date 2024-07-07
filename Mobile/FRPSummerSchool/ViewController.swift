@@ -93,12 +93,8 @@ class ViewController: UIViewController {
         collectionView
             .rx
             .itemSelected
-            .flatMap { [unowned self] indexPath in
-                self.storage.items
-                    .take(1)
-                    .map { items in
-                        items[indexPath.row]
-                    }
+            .compactMap { [unowned self] indexPath in
+                (collectionView.cellForItem(at: indexPath) as? ItemCell)?.item
             }
             .observe(on: MainScheduler.instance)
             .bind { [unowned self] item in
