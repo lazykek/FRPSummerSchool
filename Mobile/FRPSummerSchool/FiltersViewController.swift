@@ -15,10 +15,6 @@ final class FiltersViewController: UIViewController {
     var price: Observable<Int> {
         slider.rx.value
             .map { Int($0) }
-            // лучше так не делать
-            .do(onNext: { [unowned self] value in
-                priceLabel.text = "\(value)"
-            })
             .asObservable()
     }
 
@@ -54,6 +50,11 @@ final class FiltersViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         slider.value = Float(price)
+        slider.rx.value
+            .asDriver()
+            .map { Int($0).description }
+            .drive(priceLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     required init?(coder: NSCoder) {
