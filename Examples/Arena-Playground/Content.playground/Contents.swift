@@ -44,7 +44,7 @@ example(of: "Создание Observable с onCompleted") {
 }
 
 example(of: "Создание Observable с ошибкой") {
-  let observable = Observable.create { observer in
+  let observable = Observable<Int>.create { observer in
     observer.onNext(1)
     observer.onNext(2)
     observer.onError(TestError.someError)
@@ -65,4 +65,38 @@ example(of: "Создание Observable с ошибкой") {
     }
   )
   .disposed(by: commonDisposeBag)
+}
+
+example(of: "Flat map") {
+  let parentSubject = PublishSubject<Int>()
+  let childSubject = PublishSubject<Int>()
+
+  parentSubject
+    .flatMap { value in
+      childSubject
+    }
+    .subscribe(
+      onNext: { number in
+        print(number)
+      }, onError: { error in
+        print(error)
+      },onCompleted: {
+        print("On completed")
+      }, onDisposed: {
+        print("On disposed")
+      }
+    )
+    .disposed(by: commonDisposeBag)
+
+  parentSubject.onNext(1)
+  parentSubject.onNext(2)
+
+  childSubject.onNext(3)
+  childSubject.onNext(4)
+  childSubject.onCompleted()
+  childSubject.onNext(5)
+
+  parentSubject.onNext(6) // не отработает, так как child-стрим завершился
+  parentSubject.onCompleted() // нужно пробросить два onCompleted(), иначе стрим не завершится
+  // https://stackoverflow.com/questions/65078033/why-calling-completable-method-inside-of-flatmap-does-not-working
 }

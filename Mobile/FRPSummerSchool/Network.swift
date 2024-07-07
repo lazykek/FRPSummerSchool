@@ -25,7 +25,7 @@ final class Network {
                 period: .milliseconds(1500),
                 scheduler: MainScheduler.instance
             )
-            .flatMap { [unowned self] ewr in
+            .flatMap { [unowned self] _ in
                 load(
                     request:
                         URLRequest(
