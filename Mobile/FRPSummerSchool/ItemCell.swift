@@ -20,19 +20,16 @@ final class ItemCell: UICollectionViewCell {
         }
     }
     var plusTap: Driver<String> {
-        plusButton.rx.tap
-            .asDriver()
-            .map { [unowned self] _ in
-                item?.stock.id ?? ""
-            }
+        plusTapSubject.asDriver(onErrorJustReturn: "")
     }
+
     var minusTap: Driver<String> {
-        minusButton.rx.tap
-            .asDriver()
-            .map { [unowned self] _ in
-                item?.stock.id ?? ""
-            }
+        minusTapSubject.asDriver(onErrorJustReturn: "")
     }
+
+    private var plusTapSubject: PublishSubject<String> = .init()
+    private var minusTapSubject: PublishSubject<String> = .init()
+    private let disposeBag = DisposeBag()
 
     // MARK: - UI
 
@@ -107,6 +104,18 @@ final class ItemCell: UICollectionViewCell {
     // MARK: - Private properties
 
     private func resubcribe() {
+        plusTapSubject.onCompleted()
+        minusTapSubject.onCompleted()
+        plusTapSubject = .init()
+        minusTapSubject = .init()
+        plusButton.rx.tap
+            .map { _ in self.item?.stock.id ?? "" }
+            .subscribe(plusTapSubject)
+            .disposed(by: disposeBag)
+        minusButton.rx.tap
+            .map { _ in self.item?.stock.id ?? "" }
+            .subscribe(minusTapSubject)
+            .disposed(by: disposeBag)
     }
 
     private func updateUI() {
