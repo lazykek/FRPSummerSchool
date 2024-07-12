@@ -12,12 +12,6 @@ final class FiltersViewController: UIViewController {
 
     // MARK: - Internal properties
 
-    var price: Observable<Int> {
-        slider.rx.value
-            .map { Int($0) }
-            .asObservable()
-    }
-
     // MARK: - Private properties
 
     private let disposeBag = DisposeBag()
