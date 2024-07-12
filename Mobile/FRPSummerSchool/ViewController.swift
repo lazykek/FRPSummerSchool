@@ -105,6 +105,12 @@ class ViewController: UIViewController {
         }
         .disposed(by: disposeBag)
         navigationItem.rightBarButtonItem = barItem
+
+        searchBar.rx.text
+            .subscribe { [unowned self] text in
+                storage.setSearchText(text ?? "")
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
