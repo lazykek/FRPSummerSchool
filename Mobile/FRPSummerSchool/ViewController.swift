@@ -43,6 +43,7 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
+    private let minPriceSubject = BehaviorSubject<Int>(value: 0)
     private let disposeBag = DisposeBag()
 
     // MARK: - Lifecycle
@@ -51,14 +52,21 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
 
-        storage.items
-            .bind(
-                to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
-            ) { index, item, cell in
-                cell.item = item
-            }
-            .disposed(by: disposeBag)
-        
+        Observable.combineLatest(
+            storage.items,
+            minPriceSubject
+        )
+        .compactMap { items, minPrice in
+            items
+                .filter { $0.stock.price >= minPrice }
+        }
+        .bind(
+            to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
+        ) { index, item, cell in
+            cell.item = item
+        }
+        .disposed(by: disposeBag)
+
         let visibleCell = collectionView.rx.willDisplayCell
             .asDriver()
             .compactMap { cell, id in
@@ -141,7 +149,9 @@ class ViewController: UIViewController {
     }
 
     private func openFilters() {
-        let vc = FiltersViewController(price: 0)
+        let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
+        vc.price.subscribe(minPriceSubject)
+            .disposed(by: disposeBag)
 
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [
