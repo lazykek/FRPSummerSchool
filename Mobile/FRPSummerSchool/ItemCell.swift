@@ -19,6 +19,20 @@ final class ItemCell: UICollectionViewCell {
             updateUI()
         }
     }
+    var plusTap: Driver<String> {
+        plusButton.rx.tap
+            .asDriver()
+            .map { [unowned self] _ in
+                item?.stock.id ?? ""
+            }
+    }
+    var minusTap: Driver<String> {
+        minusButton.rx.tap
+            .asDriver()
+            .map { [unowned self] _ in
+                item?.stock.id ?? ""
+            }
+    }
 
     // MARK: - UI
 
