@@ -90,6 +90,13 @@ class ViewController: UIViewController {
                 openDetails(item: item)
             }
             .disposed(by: disposeBag)
+
+        let barItem = UIBarButtonItem(systemItem: .edit)
+        barItem.rx.tap.bind { [unowned self] _ in
+            openFilters()
+        }
+        .disposed(by: disposeBag)
+        navigationItem.rightBarButtonItem = barItem
     }
 
     // MARK: - Private methods
