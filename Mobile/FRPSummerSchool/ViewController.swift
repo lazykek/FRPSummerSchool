@@ -78,6 +78,18 @@ class ViewController: UIViewController {
             }
             .drive(onNext: storage.removeItem(id:))
             .disposed(by: disposeBag)
+
+        collectionView
+            .rx
+            .itemSelected
+            .compactMap { [unowned self] indexPath in
+                (collectionView.cellForItem(at: indexPath) as? ItemCell)?.item
+            }
+            .observe(on: MainScheduler.instance)
+            .bind { [unowned self] item in
+                openDetails(item: item)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
