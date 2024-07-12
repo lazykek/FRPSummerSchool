@@ -107,6 +107,7 @@ class ViewController: UIViewController {
         navigationItem.rightBarButtonItem = barItem
 
         searchBar.rx.text
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe { [unowned self] text in
                 storage.setSearchText(text ?? "")
             }
