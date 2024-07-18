@@ -51,9 +51,8 @@ final class FiltersViewController: UIViewController {
 
         slider.value = Float(price)
         slider.rx.value
-            .asDriver()
             .map { Int($0).description }
-            .drive(priceLabel.rx.text)
+            .bind(to: priceLabel.rx.text)
             .disposed(by: disposeBag)
     }
     

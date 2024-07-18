@@ -11,7 +11,7 @@ import RxSwift
 
 final class ItemCell: UICollectionViewCell {
 
-    // MARK: - Properties
+    // MARK: - Public properties
 
     static let id = "ItemCellId"
     var item: CartItem? {
@@ -19,13 +19,15 @@ final class ItemCell: UICollectionViewCell {
             updateUI()
         }
     }
-    var plusTap: Driver<String> {
-        plusTapSubject.asDriver(onErrorJustReturn: "")
+    var plusTap: Signal<String> {
+        plusTapSubject.asSignal(onErrorJustReturn: "")
     }
 
-    var minusTap: Driver<String> {
-        minusTapSubject.asDriver(onErrorJustReturn: "")
+    var minusTap: Signal<String> {
+        minusTapSubject.asSignal(onErrorJustReturn: "")
     }
+
+    // MARK: - Private properties
 
     private var plusTapSubject: PublishSubject<String> = .init()
     private var minusTapSubject: PublishSubject<String> = .init()

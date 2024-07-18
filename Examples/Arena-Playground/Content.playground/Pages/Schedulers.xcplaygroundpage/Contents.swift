@@ -6,31 +6,31 @@ import PlaygroundSupport
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-let firstSchedulers = SerialDispatchQueueScheduler(qos: .default)
-let secondSchedulers = SerialDispatchQueueScheduler(qos: .default)
 let commonDisposeBag = DisposeBag()
 
+let firstScheduler = SerialDispatchQueueScheduler(qos: .default)
+let secondScheduler = SerialDispatchQueueScheduler(qos: .default)
 Observable
     .just(1)
-    .map { number in
+    .map { num in
         print("map: ", Thread.current)
-        return number * 2
+        return num * 2
     }
-    .flatMap { number in
+    .flatMap { num in
         print("flatMap: ", Thread.current)
-        return Observable.just("\(number)")
+        return Observable.just("\(num)")
     }
-    .observe(on: secondSchedulers)
-    .subscribe(on: firstSchedulers)
-    .filter { string in
+    .observe(on: secondScheduler)
+    .subscribe(on: firstScheduler)
+    .filter { str in
         print("filter: ", Thread.current)
-        return !string.isEmpty
+        return !str.isEmpty
     }
     .observe(on: MainScheduler.instance)
     .subscribe(
-        onNext: { number in
+        onNext: { str in
             print("onNext: ", Thread.current)
-            print(number)
+            print(str)
         }
     )
     .disposed(by: commonDisposeBag)

@@ -291,11 +291,11 @@ example(of: "merge") {
     )
     .disposed(by: commonDisposeBag)
 
-    firstSubject.onNext(1)
-    firstSubject.onNext(2)
-    secondSubject.onNext(3) // консоль: (2, 3)
-    secondSubject.onNext(4) // консоль: (2, 4)
-    firstSubject.onNext(5) // консоль: (5, 4)
+    firstSubject.onNext(1) // консоль: 1
+    firstSubject.onNext(2) // консоль: 2
+    secondSubject.onNext(3) // консоль: 3
+    secondSubject.onNext(4) // консоль: 4
+    firstSubject.onNext(5) // консоль: 5
 }
 
 example(of: "combineLatest") {
@@ -312,9 +312,9 @@ example(of: "combineLatest") {
     )
     .disposed(by: commonDisposeBag)
 
-    firstSubject.onNext(1) // консоль: 1
-    firstSubject.onNext(2) // консоль: 2
-    secondSubject.onNext(3) // консоль: 3
-    secondSubject.onNext(4) // консоль: 4
-    firstSubject.onNext(5) // консоль: 5
+    firstSubject.onNext(1)
+    firstSubject.onNext(2)
+    secondSubject.onNext(3) // консоль: (2, 3)
+    secondSubject.onNext(4) // консоль: (2, 4)
+    firstSubject.onNext(5) // консоль: (5, 4)
 }

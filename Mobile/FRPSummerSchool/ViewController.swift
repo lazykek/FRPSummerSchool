@@ -71,7 +71,6 @@ class ViewController: UIViewController {
         .disposed(by: disposeBag)
 
         let visibleCell = collectionView.rx.willDisplayCell
-            .asDriver()
             .compactMap { cell, id in
                 cell as? ItemCell
             }
@@ -80,14 +79,14 @@ class ViewController: UIViewController {
             .flatMap { cell in
                 cell.plusTap
             }
-            .drive(onNext: storage.addItem(id:))
+            .bind(onNext: storage.addItem(id:))
             .disposed(by: disposeBag)
 
         visibleCell
             .flatMap { cell in
                 cell.minusTap
             }
-            .drive(onNext: storage.removeItem(id:))
+            .bind(onNext: storage.removeItem(id:))
             .disposed(by: disposeBag)
 
         collectionView

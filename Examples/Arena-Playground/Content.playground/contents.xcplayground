@@ -4,5 +4,6 @@
         <page name='Common'/>
         <page name='Schedulers'/>
         <page name='debounce'/>
+        <page name='rx'/>
     </pages>
 </playground>
