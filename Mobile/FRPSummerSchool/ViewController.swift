@@ -54,8 +54,14 @@ class ViewController: UIViewController {
         storage.items
             .bind(
                 to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
-            ) { index, item, cell in
+            ) { [unowned self] index, item, cell in
                 cell.item = item
+                cell.plusTap
+                    .emit(onNext: storage.addItem(id:))
+                    .disposed(by: disposeBag)
+                cell.minusTap
+                    .emit(onNext: storage.removeItem(id:))
+                    .disposed(by: disposeBag)
             }
             .disposed(by: disposeBag)
     }
