@@ -33,20 +33,37 @@ final class Storage {
     // MARK: - Private properties
 
     private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
+    private let synchronizationScheduler = SerialDispatchQueueScheduler(
+        internalSerialQueueName: "StorageSerialQueue"
+    )
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
 
     func addItem(id: String) {
-        var cart = (try? cartSubject.value()) ?? [:]
-        cart[id, default: 0] += 1
-        cartSubject.onNext(cart)
+        Observable.just(id)
+            .observe(on: synchronizationScheduler)
+            .subscribe(
+                onNext: { [unowned self] id in
+                    var cart = (try? cartSubject.value()) ?? [:]
+                    cart[id, default: 0] += 1
+                    cartSubject.onNext(cart)
+                }
+            )
+            .disposed(by: disposeBag)
     }
 
     func removeItem(id: String) {
-        var cart = (try? cartSubject.value()) ?? [:]
-        cart[id] = max(cart[id, default: 0] - 1, 0)
-        cartSubject.onNext(cart)
+        Observable.just(id)
+            .observe(on: synchronizationScheduler)
+            .subscribe(
+                onNext: { [unowned self] id in
+                    var cart = (try? cartSubject.value()) ?? [:]
+                    cart[id] = max(cart[id, default: 0] - 1, 0)
+                    cartSubject.onNext(cart)
+                }
+            )
+            .disposed(by: disposeBag)
     }
 
     func setSearchText(_ text: String) {
