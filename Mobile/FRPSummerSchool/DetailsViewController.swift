@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import RxSwift
 
 final class DetailsViewController: UIViewController {
 
@@ -14,7 +13,6 @@ final class DetailsViewController: UIViewController {
 
     private let id: String
     private let storage = Storage.shared
-    private let disposeBag = DisposeBag()
 
     // MARK: - UI
 
@@ -76,32 +74,6 @@ final class DetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-
-        plusButton.rx.tap
-            .subscribe { [unowned self] _ in
-                storage.addItem(id: id)
-            }
-            .disposed(by: disposeBag)
-
-        minusButton.rx.tap
-            .subscribe { [unowned self] _ in
-                storage.removeItem(id: id)
-            }
-            .disposed(by: disposeBag)
-
-        storage.items
-            .compactMap { [unowned self] items in
-                items.first(where: { $0.stock.id == id })
-            }
-            .observe(on: MainScheduler.instance)
-            .subscribe(
-                onNext: { [unowned self] item in
-                    updateUI(item: item)
-                }, onError: { error in
-                    print(error)
-                }
-            )
-            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods

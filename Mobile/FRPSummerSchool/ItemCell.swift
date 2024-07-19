@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
 
 final class ItemCell: UICollectionViewCell {
 
@@ -19,19 +17,8 @@ final class ItemCell: UICollectionViewCell {
             updateUI()
         }
     }
-    var plusTap: Signal<String> {
-        plusTapSubject.asSignal(onErrorJustReturn: "")
-    }
-
-    var minusTap: Signal<String> {
-        minusTapSubject.asSignal(onErrorJustReturn: "")
-    }
 
     // MARK: - Private properties
-
-    private var plusTapSubject: PublishSubject<String> = .init()
-    private var minusTapSubject: PublishSubject<String> = .init()
-    private let disposeBag = DisposeBag()
 
     // MARK: - UI
 
@@ -105,18 +92,6 @@ final class ItemCell: UICollectionViewCell {
     // MARK: - Private properties
 
     private func resubcribe() {
-        plusTapSubject.onCompleted()
-        minusTapSubject.onCompleted()
-        plusTapSubject = .init()
-        minusTapSubject = .init()
-        plusButton.rx.tap
-            .map { _ in self.item?.stock.id ?? "" }
-            .subscribe(plusTapSubject)
-            .disposed(by: disposeBag)
-        minusButton.rx.tap
-            .map { _ in self.item?.stock.id ?? "" }
-            .subscribe(minusTapSubject)
-            .disposed(by: disposeBag)
     }
 
     private func updateUI() {

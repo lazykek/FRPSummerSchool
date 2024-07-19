@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
 
 class ViewController: UIViewController {
 
@@ -43,99 +41,12 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
-    private let minPriceSubject = BehaviorSubject<Int>(value: 0)
-    private let disposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-    
-        Observable.combineLatest(
-            storage.items,
-            minPriceSubject
-        )
-        .compactMap { items, minPrice in
-            items
-                .filter { $0.stock.price >= minPrice }
-        }
-        .catchAndReturn([])
-        .bind(
-            to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
-        ) { index, item, cell in
-            cell.item = item
-        }
-        .disposed(by: disposeBag)
-
-        let visibleCell = collectionView.rx.willDisplayCell
-            .compactMap { cell, id in
-                cell as? ItemCell
-            }
-
-        visibleCell
-            .flatMap { cell in
-                cell.plusTap
-            }
-            .bind(onNext: storage.addItem(id:))
-            .disposed(by: disposeBag)
-
-        visibleCell
-            .flatMap { cell in
-                cell.minusTap
-            }
-            .bind(onNext: storage.removeItem(id:))
-            .disposed(by: disposeBag)
-
-        collectionView
-            .rx
-            .itemSelected
-            .compactMap { [unowned self] indexPath in
-                (collectionView.cellForItem(at: indexPath) as? ItemCell)?.item
-            }
-            .observe(on: MainScheduler.instance)
-            .bind { [unowned self] item in
-                openDetails(item: item)
-            }
-            .disposed(by: disposeBag)
-
-        let barItem = UIBarButtonItem(systemItem: .edit)
-        barItem.rx.tap.bind { [unowned self] _ in
-            openFilters()
-        }
-        .disposed(by: disposeBag)
-        navigationItem.rightBarButtonItem = barItem
-
-        let itemsMoving = Observable.merge(
-            collectionView.rx.willBeginDragging.map { true },
-            collectionView.rx.didEndDecelerating.map { false },
-            collectionView.rx.didEndDragging.asObservable()
-        )
-            .startWith(false)
-            .distinctUntilChanged()
-
-        Observable.combineLatest(
-            storage.cart,
-            itemsMoving
-        )
-        .map { count, itemsMoving in
-            (count, count > 0 && !itemsMoving)
-        }
-        .observe(on: MainScheduler.instance)
-        .subscribe(onNext: { count, showCart in
-            UIView.animate(withDuration: 0.3) { [unowned self] in
-                cartView.itemsCount = count
-                cartView.layer.opacity = showCart ? 1 : 0
-            }
-        })
-        .disposed(by: disposeBag)
-
-        searchBar.rx.text
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe { [unowned self] text in
-                storage.setSearchText(text ?? "")
-            }
-            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
@@ -180,17 +91,7 @@ class ViewController: UIViewController {
     }
 
     private func openFilters() {
-        let vc = FiltersViewController(price: (try? minPriceSubject.value()) ?? 0)
-//        luggy code
-//        vc.price.subscribe(minPriceSubject)
-//            .disposed(by: filtersDisposeBag)
-//        completed эммитится в общий флоу,
-//        и поэтому даже после пересоздания подписки
-//        таблица не обновляется
-        vc.price.subscribe { [unowned self] value in
-            minPriceSubject.onNext(value)
-        }
-        .disposed(by: disposeBag)
+        let vc = FiltersViewController(price: 0)
 
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [
