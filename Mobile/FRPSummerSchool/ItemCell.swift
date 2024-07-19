@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxCocoa
 
 final class ItemCell: UICollectionViewCell {
 
@@ -16,6 +17,17 @@ final class ItemCell: UICollectionViewCell {
         didSet {
             updateUI()
         }
+    }
+    var plusTap: Signal<String> {
+        plusButton.rx.tap
+            .asSignal()
+            .map { _ in self.item?.stock.id ?? "" }
+    }
+
+    var minusTap: Signal<String> {
+        minusButton.rx.tap
+            .asSignal()
+            .map { _ in self.item?.stock.id ?? "" }
     }
 
     // MARK: - Private properties
