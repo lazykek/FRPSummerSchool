@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 struct CartItem: Equatable {
     let stock: Stock
@@ -17,6 +18,12 @@ final class Storage {
     // MARK: - Singleton
 
     static let shared: Storage = .init()
+    var items: Observable<[CartItem]> {
+        Network.shared.stocks
+            .map { stocks in
+                stocks.map { CartItem(stock: $0, count: 0) }
+            }
+    }
 
     // MARK: - Public properties
 
