@@ -60,6 +60,7 @@ class ViewController: UIViewController {
             items
                 .filter { $0.stock.price >= minPrice }
         }
+        .catchAndReturn([])
         .bind(
             to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
         ) { index, item, cell in
