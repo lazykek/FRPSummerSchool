@@ -5,5 +5,6 @@
         <page name='Schedulers'/>
         <page name='debounce'/>
         <page name='rx'/>
+        <page name='Racing'/>
     </pages>
 </playground>
