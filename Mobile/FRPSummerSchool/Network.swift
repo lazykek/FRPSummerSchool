@@ -17,28 +17,33 @@ final class Network {
     // MARK: - Internal properties
 
     static let shared: Network  = .init()
-
+    
     lazy var stocks: Observable<[Stock]> = {
-        Observable<Int>
-            .timer(
-                .milliseconds(0),
-                period: .milliseconds(1500),
-                scheduler: MainScheduler.instance
+        Observable.combineLatest(
+            Observable<Int>
+                .timer(
+                    .milliseconds(0),
+                    period: .milliseconds(1500),
+                    scheduler: MainScheduler.instance
+                ),
+            searchTextSubject
+                .startWith("")
+        )
+        .flatMap { [unowned self] _, searchText in
+            load(
+                request:
+                    URLRequest(
+                        url: URL(
+                            string: "http://127.0.0.1:8080/items?search_text=\(searchText)")!
+                    )
             )
-            .flatMap { [unowned self] _ in
-                load(
-                    request:
-                        URLRequest(
-                            url: URL(
-                                string: "http://127.0.0.1:8080/items"
-                            )!
-                        )
-                )
-                .asObservable()
-            }
+            .asObservable()
+        }
     }()
 
     // MARK: - Private properties
+
+    private let searchTextSubject: PublishSubject<String> = .init()
 
     // MARK: - Init
 
@@ -48,6 +53,7 @@ final class Network {
     // MARK: - Internal methods
 
     func setSearchText(_ text: String) {
+        searchTextSubject.onNext(text)
     }
 
     // MARK: - Private methods
