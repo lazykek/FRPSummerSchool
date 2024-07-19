@@ -19,24 +19,29 @@ final class Storage {
 
     static let shared: Storage = .init()
 
-    // MARK: - Properties
+    // MARK: - Public properties
 
     var items: Observable<[CartItem]> {
         Observable.combineLatest(
             stocksSubject,
             cartSubject
         )
-        .observe(on: scheduler)
         .map { stocks, cart in
             stocks.map { CartItem(stock: $0, count: cart[$0.id] ?? 0) }
         }
     }
     var cart: Observable<Int> {
-        cartSubject.map { $0.count }.asObservable()
+        cartSubject
+            .map { dict in
+                dict.compactMap { _, value in value }.reduce(0, +)
+            }
     }
+
+    // MARK: - Private properties
+
     private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
     private let stocksSubject: BehaviorSubject<[Stock]> = .init(value: [])
-    private let scheduler = SerialDispatchQueueScheduler(
+    private let synchronizationScheduler = SerialDispatchQueueScheduler(
         internalSerialQueueName: "StorageSerialQueue"
     )
     private let disposeBag = DisposeBag()
@@ -44,18 +49,29 @@ final class Storage {
     // MARK: - Methods
 
     func addItem(id: String) {
-        var cart = (try? cartSubject.value()) ?? [:]
-        cart[id, default: 0] += 1
-        cartSubject.onNext(cart)
+        Observable.just(id)
+            .observe(on: synchronizationScheduler)
+            .subscribe(
+                onNext: { [unowned self] id in
+                    var cart = (try? cartSubject.value()) ?? [:]
+                    cart[id, default: 0] += 1
+                    cartSubject.onNext(cart)
+                }
+            )
+            .disposed(by: disposeBag)
     }
 
     func removeItem(id: String) {
-        var cart = (try? cartSubject.value()) ?? [:]
-        cart[id, default: 0] -= 1
-        if cart[id, default: 0] <= 0 {
-            cart[id] = nil
-        }
-        cartSubject.onNext(cart)
+        Observable.just(id)
+            .observe(on: synchronizationScheduler)
+            .subscribe(
+                onNext: { [unowned self] id in
+                    var cart = (try? cartSubject.value()) ?? [:]
+                    cart[id] = max(cart[id, default: 0] - 1, 0)
+                    cartSubject.onNext(cart)
+                }
+            )
+            .disposed(by: disposeBag)
     }
 
     func setSearchText(_ text: String) {

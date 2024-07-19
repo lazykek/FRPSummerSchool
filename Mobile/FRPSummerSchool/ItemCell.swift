@@ -94,7 +94,6 @@ final class ItemCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        print(#function)
         resubcribe()
         updateUI()
     }
