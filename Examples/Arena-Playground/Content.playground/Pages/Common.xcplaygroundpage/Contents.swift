@@ -318,3 +318,51 @@ example(of: "combineLatest") {
     secondSubject.onNext(4) // консоль: (2, 4)
     firstSubject.onNext(5) // консоль: (5, 4)
 }
+
+example(of: "filter") {
+    Observable
+        .from([0, 1, 2, 3])
+        .filter { $0 > 1 }
+        .subscribe(
+            onNext: { string in
+                print(string)
+            }
+        )
+        .disposed(by: commonDisposeBag)
+}
+
+example(of: "skip") {
+    Observable
+        .from([0, 1, 2, 3])
+        .skip(2)
+        .subscribe(
+            onNext: { string in
+                print(string)
+            }
+        )
+        .disposed(by: commonDisposeBag)
+}
+
+example(of: "take") {
+    Observable
+        .from([0, 1, 2, 3])
+        .take(2)
+        .subscribe(
+            onNext: { string in
+                print(string)
+            }
+        )
+        .disposed(by: commonDisposeBag)
+}
+
+example(of: "distinctUntilChanged") {
+    Observable
+        .from([0, 1, 1, 1, 2, 2, 3])
+        .distinctUntilChanged()
+        .subscribe(
+            onNext: { string in
+                print(string)
+            }
+        )
+        .disposed(by: commonDisposeBag)
+}
