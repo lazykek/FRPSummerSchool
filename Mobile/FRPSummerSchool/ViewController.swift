@@ -44,7 +44,6 @@ class ViewController: UIViewController {
 
     private let storage = Storage.shared
     private let disposeBag = DisposeBag()
-    private var cellsDisposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
@@ -53,20 +52,30 @@ class ViewController: UIViewController {
         setupUI()
 
         storage.items
-            .do(onNext: { [unowned self] _ in
-                cellsDisposeBag = DisposeBag()
-            })
             .bind(
                 to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
-            ) { [unowned self] index, item, cell in
+            ) { index, item, cell in
                 cell.item = item
-                cell.plusTap
-                    .emit(onNext: storage.addItem(id:))
-                    .disposed(by: cellsDisposeBag)
-                cell.minusTap
-                    .emit(onNext: storage.removeItem(id:))
-                    .disposed(by: cellsDisposeBag)
             }
+            .disposed(by: disposeBag)
+
+        let visibleCell = collectionView.rx.willDisplayCell
+            .compactMap { cell, id in
+                cell as? ItemCell
+            }
+
+        visibleCell
+            .flatMap { cell in
+                cell.plusTap
+            }
+            .bind(onNext: storage.addItem(id:))
+            .disposed(by: disposeBag)
+
+        visibleCell
+            .flatMap { cell in
+                cell.minusTap
+            }
+            .bind(onNext: storage.removeItem(id:))
             .disposed(by: disposeBag)
     }
 
