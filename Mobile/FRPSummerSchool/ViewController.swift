@@ -45,8 +45,6 @@ class ViewController: UIViewController {
     private let storage = Storage.shared
     private let minPriceSubject = BehaviorSubject<Int>(value: 0)
     private let disposeBag = DisposeBag()
-    private var cellsDisposeBag = DisposeBag()
-    private var filtersDisposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
