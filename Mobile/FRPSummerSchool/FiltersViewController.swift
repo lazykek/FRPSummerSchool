@@ -6,12 +6,21 @@
 //
 
 import UIKit
+import RxSwift
 
 final class FiltersViewController: UIViewController {
 
     // MARK: - Internal properties
 
+    var price: Observable<Int> {
+        slider.rx.value
+            .map { Int($0) }
+            .asObservable()
+    }
+
     // MARK: - Private properties
+
+    private let disposeBag = DisposeBag()
 
     // MARK: - UI
 
@@ -39,6 +48,12 @@ final class FiltersViewController: UIViewController {
 
     init(price: Int) {
         super.init(nibName: nil, bundle: nil)
+
+        slider.value = Float(price)
+        slider.rx.value
+            .map { Int($0).description }
+            .bind(to: priceLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     
     required init?(coder: NSCoder) {
