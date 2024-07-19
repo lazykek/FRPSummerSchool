@@ -19,22 +19,34 @@ final class Storage {
 
     static let shared: Storage = .init()
     var items: Observable<[CartItem]> {
-        Network.shared.stocks
-            .map { stocks in
-                stocks.map { CartItem(stock: $0, count: 0) }
-            }
+        Observable.combineLatest(
+            Network.shared.stocks,
+            cartSubject
+        )
+        .map { stocks, cart in
+            stocks.map { CartItem(stock: $0, count: cart[$0.id] ?? 0) }
+        }
     }
 
     // MARK: - Public properties
 
     // MARK: - Private properties
 
+    private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
+    private let disposeBag = DisposeBag()
+
     // MARK: - Methods
 
     func addItem(id: String) {
+        var cart = (try? cartSubject.value()) ?? [:]
+        cart[id, default: 0] += 1
+        cartSubject.onNext(cart)
     }
 
     func removeItem(id: String) {
+        var cart = (try? cartSubject.value()) ?? [:]
+        cart[id] = max(cart[id, default: 0] - 1, 0)
+        cartSubject.onNext(cart)
     }
 
     func setSearchText(_ text: String) {
