@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxCocoa
+import RxSwift
 
 class ViewController: UIViewController {
 
@@ -41,12 +43,21 @@ class ViewController: UIViewController {
     // MARK: - Properties
 
     private let storage = Storage.shared
+    private let disposeBag = DisposeBag()
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+
+        storage.items
+            .bind(
+                to: collectionView.rx.items(cellIdentifier: ItemCell.id, cellType: ItemCell.self)
+            ) { index, item, cell in
+                cell.item = item
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
