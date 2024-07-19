@@ -27,6 +27,12 @@ final class Storage {
             stocks.map { CartItem(stock: $0, count: cart[$0.id] ?? 0) }
         }
     }
+    var cart: Observable<Int> {
+        cartSubject
+            .map { dict in
+                dict.compactMap { _, value in value }.reduce(0, +)
+            }
+    }
 
     // MARK: - Public properties
 

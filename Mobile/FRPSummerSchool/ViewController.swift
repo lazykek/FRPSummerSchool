@@ -111,6 +111,30 @@ class ViewController: UIViewController {
                 storage.setSearchText(text ?? "")
             }
             .disposed(by: disposeBag)
+
+        let itemsMoving = Observable.merge(
+            collectionView.rx.willBeginDragging.map { true },
+            collectionView.rx.didEndDecelerating.map { false },
+            collectionView.rx.didEndDragging.asObservable()
+        )
+            .startWith(false)
+            .distinctUntilChanged()
+
+        Observable.combineLatest(
+            storage.cart,
+            itemsMoving
+        )
+        .map { count, itemsMoving in
+            (count, count > 0 && !itemsMoving)
+        }
+        .observe(on: MainScheduler.instance)
+        .subscribe(onNext: { count, showCart in
+            UIView.animate(withDuration: 0.3) { [unowned self] in
+                cartView.itemsCount = count
+                cartView.layer.opacity = showCart ? 1 : 0
+            }
+        })
+        .disposed(by: disposeBag)
     }
 
     // MARK: - Private methods
