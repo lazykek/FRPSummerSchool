@@ -20,7 +20,7 @@ final class Storage {
     static let shared: Storage = .init()
     var items: Observable<[CartItem]> {
         Observable.combineLatest(
-            Network.shared.stocks,
+            stocksSubject,
             cartSubject
         )
         .map { stocks, cart in
@@ -32,6 +32,7 @@ final class Storage {
 
     // MARK: - Private properties
 
+    private let stocksSubject: BehaviorSubject<[Stock]> = .init(value: [])
     private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
     private let synchronizationScheduler = SerialDispatchQueueScheduler(
         internalSerialQueueName: "StorageSerialQueue"
@@ -73,5 +74,8 @@ final class Storage {
     // MARK: - Init
 
     private init() {
+        Network.shared.stocks
+            .subscribe(stocksSubject)
+            .disposed(by: self.disposeBag)
     }
 }
