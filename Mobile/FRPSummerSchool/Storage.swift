@@ -15,6 +15,13 @@ struct CartItem: Equatable {
 
 final class Storage {
 
+    // MARK: - Nested types
+
+    private enum Event {
+        case add(id: String)
+        case remove(id: String)
+    }
+
     // MARK: - Singleton
 
     static let shared: Storage = .init()
@@ -40,6 +47,7 @@ final class Storage {
     // MARK: - Private properties
 
     private let cartSubject: BehaviorSubject<[String: Int]> = .init(value: [:])
+    private let eventSubject: PublishSubject<Event> = .init()
     private let stocksSubject: BehaviorSubject<[Stock]> = .init(value: [])
     private let synchronizationScheduler = SerialDispatchQueueScheduler(
         internalSerialQueueName: "StorageSerialQueue"
@@ -49,29 +57,11 @@ final class Storage {
     // MARK: - Methods
 
     func addItem(id: String) {
-        Observable.just(id)
-            .observe(on: synchronizationScheduler)
-            .subscribe(
-                onNext: { [unowned self] id in
-                    var cart = (try? cartSubject.value()) ?? [:]
-                    cart[id, default: 0] += 1
-                    cartSubject.onNext(cart)
-                }
-            )
-            .disposed(by: disposeBag)
+        eventSubject.onNext(.add(id: id))
     }
 
     func removeItem(id: String) {
-        Observable.just(id)
-            .observe(on: synchronizationScheduler)
-            .subscribe(
-                onNext: { [unowned self] id in
-                    var cart = (try? cartSubject.value()) ?? [:]
-                    cart[id] = max(cart[id, default: 0] - 1, 0)
-                    cartSubject.onNext(cart)
-                }
-            )
-            .disposed(by: disposeBag)
+        eventSubject.onNext(.remove(id: id))
     }
 
     func setSearchText(_ text: String) {
@@ -82,7 +72,23 @@ final class Storage {
 
     private init() {
         Network.shared.stocks
+            .observe(on: synchronizationScheduler)
             .subscribe(stocksSubject)
-            .disposed(by: self.disposeBag)
+            .disposed(by: disposeBag)
+
+        eventSubject
+            .observe(on: synchronizationScheduler)
+            .withLatestFrom(cartSubject) { event, cart in
+                var cart = cart
+                switch event {
+                case let .add(id):
+                    cart[id, default: 0] += 1
+                case let .remove(id):
+                    cart[id] = max(cart[id, default: 0] - 1, 0)
+                }
+                return cart
+            }
+            .subscribe(cartSubject)
+            .disposed(by: disposeBag)
     }
 }

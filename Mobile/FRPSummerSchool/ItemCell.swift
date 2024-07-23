@@ -31,7 +31,7 @@ final class ItemCell: UICollectionViewCell {
 
     private var plusTapSubject: PublishSubject<String> = .init()
     private var minusTapSubject: PublishSubject<String> = .init()
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
 
     // MARK: - UI
 
@@ -109,6 +109,7 @@ final class ItemCell: UICollectionViewCell {
         minusTapSubject.onCompleted()
         plusTapSubject = .init()
         minusTapSubject = .init()
+        disposeBag = DisposeBag()
         plusButton.rx.tap
             .map { _ in self.item?.stock.id ?? "" }
             .subscribe(plusTapSubject)
